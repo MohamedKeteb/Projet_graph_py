@@ -78,7 +78,7 @@ def graph_from_file(filename):
             g.add_edge(node1, node2, power_min, dist)
     return g
 
-# Question 3
+# Question 3 à changer 
 def get_path_with_power(p, t, g): # g est un graph 
 
     def power_trip(l, g): # l représente un chemin entre deux villes, power trip donne la puissance   
