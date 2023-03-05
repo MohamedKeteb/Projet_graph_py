@@ -170,7 +170,6 @@ def sort_edge(g):
 
     
 
-"ddfdf"
 
 def kursal(g):
     array = [i for i in range(1, g.nb_nodes + 1)]
