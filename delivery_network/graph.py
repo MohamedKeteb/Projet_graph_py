@@ -151,5 +151,35 @@ def min_power(t, g):
     return les_chemins_min, p_min
     
 
-##Question 7 
+
+
+
+
+## Séance 2
+
+##Question 3
+
+def sort_edge(g):
+    edge = []
+    for v in g.graph.keys(): 
+        for e in g.graph[v]:
+            if (e[0], v, e[1]) in edge:
+                continue
+            edge.append((v, e[0], e[1]))
+    return edge
+
+    
+
+
+
+def kursal(g):
+    array = [i for i in range(1, g.nb_nodes + 1)]
+    tree = []
+    edge  = sort_edge(g)
+    while array != [array[0][0]]*g.nb_nodes:
+        for a in array:
+            if array[a[0] - 1] != array[a[1] - 1]:
+                array[a[0] - 1] = array[a[1] - 1]
+                tree.append(a)
+    return tree 
 
