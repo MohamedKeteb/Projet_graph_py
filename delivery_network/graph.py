@@ -60,6 +60,38 @@ class Graph:
     def connected_components_set(self):
         return set(map(frozenset, self.connected_components()))
     
+    def get_path_with_p(self, src, dest, power):
+
+        def arret(l, dest):
+            for i in l:
+                if i[-1] is not dest : 
+                    return False
+            return True 
+        c = []
+        for l in self.connected_components():
+            if src in l:
+                c = l
+        if dest not in c:
+            return None
+                
+        chem = [[src]]
+        while not arret(chem, dest):
+            q = []
+            for p in chem:
+                u = p[-1]
+                if u == dest:
+                    q.append(p)
+                else:
+                    for t in self.graph[u]:
+                        if not (t[0] in p) and power>= t[1]:
+                            v = [i for i in p]
+                            v.append(t[0])
+                            q.append(v)
+            chem= q
+        if len(chem) == 0:
+            return None
+        else:
+            return chem
    
 #Question 1 et 4
 def graph_from_file(filename):

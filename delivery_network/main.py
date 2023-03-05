@@ -7,5 +7,5 @@ g = graph_from_file(filename)
 print(g)
 
 print(g.connected_components_set())
+print(g.get_path_with_p(1, 2, 11))
 
-print(get_path_with_power(11, (1, 4), g))
