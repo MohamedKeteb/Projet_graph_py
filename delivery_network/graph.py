@@ -117,7 +117,7 @@ def get_path_with_power(p, t, g): # g est un graph
 
 #Question 5
 def get_path_with_power_dist(p, t, g):
-    les_chemins = get_path_with_power(20, (7,6), g)
+    les_chemins = get_path_with_power(p, t, g)
     def dist_trip(l): 
         d = 0   
         for i in range(len(l)-1):
