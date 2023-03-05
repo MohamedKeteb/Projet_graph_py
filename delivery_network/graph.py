@@ -1,14 +1,7 @@
+
+import math
 class Graph:
-    
-    "kzjehfisezfh"
     def __init__(self, nodes=[]):
-        """
-        Initializes the graph with a set of nodes, and no edges. 
-        Parameters: 
-        -----------
-        nodes: list, optional
-            A list of nodes. Default is empty.
-        """
         self.nodes = nodes
         self.graph = dict([(n, []) for n in nodes])
         self.nb_nodes = len(nodes)
@@ -26,87 +19,137 @@ class Graph:
         return output
     
     def add_edge(self, node1, node2, power_min, dist=1):
-        """
-        Adds an edge to the graph. Graphs are not oriented, hence an edge is added to the adjacency list of both end nodes. 
+        k = self.graph.keys()
+        if node1 not in k:
+            self.graph[node1] = [(node2, power_min, dist)]
+        else : 
+            self.graph[node1].append((node2, power_min, dist))
 
-        Parameters: 
-        -----------
-        node1: NodeType
-            First end (node) of the edge
-        node2: NodeType
-            Second end (node) of the edge
-        power_min: numeric (int or float)
-            Minimum power on this edge
-        dist: numeric (int or float), optional
-            Distance between node1 and node2 on the edge. Default is 1.
-        """
-        if node1 not in self.graph:
-            self.graph[node1] = []
-            self.nb_nodes += 1
-            self.nodes.append(node1)
-        if node2 not in self.graph:
-            self.graph[node2] = []
-            self.nb_nodes += 1
-            self.nodes.append(node2)
+        if node2 not in k:
+            self.graph[node2] = [(node1, power_min, dist)]
+        else : 
+            self.graph[node2].append((node1, power_min, dist))
+         
+    def is_direction(self,node1,node2):
+        direction = []
+        for v in self.neig(node1):
+            if node2 in self.deep_parcour(v,l = [node1]):
+                direction.append(v)
+        return direction
 
-        self.graph[node1].append((node2, power_min, dist))
-        self.graph[node2].append((node1, power_min, dist))
-        self.nb_edges += 1
-    
+    def neig(self, node):
+        return [j[0] for j in self.graph.get(node)]  
 
-    def get_path_with_power(self, src, dest, power):
-        raise NotImplementedError
-    
-
+    def deep_parcour(self,node,l):
+        if node not in l:
+            l.append(node)
+            for w in self.neig(node):
+                self.deep_parcour(w, l)
+        return l 
+    # Question 2
     def connected_components(self):
-        raise NotImplementedError
-
+        visited = [False] * self.nb_nodes
+        component = []
+        for i in range(self.nb_nodes):
+            if not visited[i] : 
+                component.append(self.deep_parcour(i+1, l=[]))
+                for j in self.deep_parcour(i+1, l = []):
+                    visited[j-1] = True 
+        return component
 
     def connected_components_set(self):
-        """
-        The result should be a set of frozensets (one per component), 
-        For instance, for network01.in: {frozenset({1, 2, 3}), frozenset({4, 5, 6, 7})}
-        """
         return set(map(frozenset, self.connected_components()))
     
-    def min_power(self, src, dest):
-        """
-        Should return path, min_power. 
-        """
-        raise NotImplementedError
-
-
+   
+#Question 1 et 4
 def graph_from_file(filename):
-    """
-    Reads a text file and returns the graph as an object of the Graph class.
-
-    The file should have the following format: 
-        The first line of the file is 'n m'
-        The next m lines have 'node1 node2 power_min dist' or 'node1 node2 power_min' (if dist is missing, it will be set to 1 by default)
-        The nodes (node1, node2) should be named 1..n
-        All values are integers.
-
-    Parameters: 
-    -----------
-    filename: str
-        The name of the file
-
-    Outputs: 
-    -----------
-    g: Graph
-        An object of the class Graph with the graph from file_name.
-    """
-    with open(filename, "r") as file:
-        n, m = map(int, file.readline().split())
-        g = Graph(range(1, n+1))
-        for _ in range(m):
-            edge = list(map(int, file.readline().split()))
-            if len(edge) == 3:
-                node1, node2, power_min = edge
-                g.add_edge(node1, node2, power_min) # will add dist=1 by default
-            elif len(edge) == 4:
-                node1, node2, power_min, dist = edge
-                g.add_edge(node1, node2, power_min, dist)
-            else:
-                raise Exception("Format incorrect")
+    g = Graph()
+    f = open(filename, 'r')
+    lines = f.readlines()
+    g.nb_nodes, g.nb_edges = map(int, lines[0].split())
+    g.graph = dict([(n, []) for n in range(1, g.nb_nodes+1)])
+    for i in range(1, len(lines)):
+        if len(lines[i].split()) == 3:
+            node1, node2, power_min = map(int, lines[i].split())
+            g.add_edge(node1, node2, power_min)
+        else:
+            node1, node2, power_min, dist = map(int, lines[i].split())
+            g.add_edge(node1, node2, power_min, dist)
     return g
+
+# Question 3
+def get_path_with_power(p, t, g): # g est un graph 
+
+    def power_trip(l, g): # l représente un chemin entre deux villes, power trip donne la puissance   
+        w = 0   # minimale qu'il faut pour passer le chemin
+        for i in range(len(l)-1):
+            for j in g.graph[l[i]]:
+                if j[0] == l[i+1] and j[1] >= w:
+                    w = j[1]
+                    break
+        return w
+
+    for l in g.connected_components():   # ici je vérifie c'est les deux villes sont dans la meme composante
+        if t[0] in l :
+            if t[1] in l:
+                break
+            else:
+                return None
+    les_chemins = []
+    def chemin(ville1, ville2, l):   
+        if ville1 not in l:          
+            l.append(ville1)
+            for v in g.is_direction(ville1, ville2):
+                if v == ville2:
+                    if power_trip(l + [ville2], g) <= p:
+                        l.append(ville2)
+                        les_chemins.append(l)
+                        break
+
+                chemin(v, ville2, l)
+
+    chemin(t[0], t[1], l = [])
+
+    if len(les_chemins) != 0:
+        return les_chemins
+    else:
+        return None
+
+#Question 5
+def get_path_with_power_dist(p, t, g):
+    les_chemins = get_path_with_power(20, (7,6), g)
+    def dist_trip(l): 
+        d = 0   
+        for i in range(len(l)-1):
+            for j in g.graph[l[i]]:
+                if j[0] == l[i+1]:
+                    d += j[2]
+        return d
+    d_min = min([dist_trip(l) for l in les_chemins])
+    les_chemins_min = []
+    for t in les_chemins:
+        if dist_trip(t) == d_min:
+            les_chemins_min.append(t)
+    return les_chemins_min, d_min
+    
+#Question 6
+def min_power(t, g):
+    def power_trip(l): 
+        w = 0   
+        for i in range(len(l)-1):
+            for j in g.graph[l[i]]:
+                if j[0] == l[i+1] and j[1] >= w:
+                    w = j[1]            
+        return w
+
+    les_chemins_min = []
+    les_chemins = get_path_with_power(math.inf, t, g)
+    p_min = min([power_trip(l) for l in les_chemins])
+    for l in les_chemins:
+        if power_trip(l) == p_min:
+            les_chemins_min.append(l)
+    return les_chemins_min, p_min
+    
+
+##Question 7 
+
