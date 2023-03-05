@@ -8,6 +8,7 @@ class Graph:
         self.nb_edges = 0
     
 
+
     def __str__(self):
         """Prints the graph as a list of neighbors for each node (one per line)"""
         if not self.graph:
