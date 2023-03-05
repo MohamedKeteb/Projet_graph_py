@@ -67,7 +67,7 @@ def graph_from_file(filename):
     f = open(filename, 'r')
     lines = f.readlines()
     g.nb_nodes, g.nb_edges = map(int, lines[0].split())
-    g.graph = dict([(n, []) for n in range(1, g.nb_nodes+1)])
+    g.nodes = [i for i in range(1, g.nb_nodes + 1)]
     for i in range(1, len(lines)):
         if len(lines[i].split()) == 3:
             node1, node2, power_min = map(int, lines[i].split())
@@ -166,19 +166,18 @@ def sort_edge(g):
             if (e[0], v, e[1]) in edge:
                 continue
             edge.append((v, e[0], e[1]))
+    edge.sort(key= lambda x: x[2])
     return edge
 
-    
-
-
-def kursal(g):
-    array = [i for i in range(1, g.nb_nodes + 1)]
-    tree = []
+def kruskal(g):
+    tree = Graph(g.nodes)
+    array = g.nodes
     edge  = sort_edge(g)
-    while array != [array[0][0]]*g.nb_nodes:
-        for a in array:
+    while array != [edge[0][0]]*g.nb_nodes:
+        for a in edge:
             if array[a[0] - 1] != array[a[1] - 1]:
                 array[a[0] - 1] = array[a[1] - 1]
-                tree.append(a)
-    return tree 
+                tree.graph[a[0]], tree.graph[a[1]] = a[1], a[0]           
+    return tree.graph
+
 

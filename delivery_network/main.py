@@ -5,3 +5,4 @@ filename = "network.test.in"
 g = graph_from_file(filename)
 
 print(g)
+
