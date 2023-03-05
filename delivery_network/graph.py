@@ -30,13 +30,7 @@ class Graph:
         else : 
             self.graph[node2].append((node1, power_min, dist))
          
-    def is_direction(self,node1,node2):
-        direction = []
-        for v in self.neig(node1):
-            if node2 in self.deep_parcour(v,l = [node1]):
-                direction.append(v)
-        return direction
-
+ # Question 2
     def neig(self, node):
         return [j[0] for j in self.graph.get(node)]  
 
@@ -46,7 +40,7 @@ class Graph:
             for w in self.neig(node):
                 self.deep_parcour(w, l)
         return l 
-    # Question 2
+
     def connected_components(self):
         visited = [False] * self.nb_nodes
         component = []
@@ -56,12 +50,47 @@ class Graph:
                 for j in self.deep_parcour(i+1, l = []):
                     visited[j-1] = True 
         return component
+# fin Q2
 
     def connected_components_set(self):
         return set(map(frozenset, self.connected_components()))
     
-    def get_path_with_p(self, src, dest, power):
+# Question3
+    def get_path_with_power(self, src, dest, power):
+        def arret(l, dest):
+            for i in l:
+                if i[-1] is not dest : 
+                    return False
+            return True 
+        c = []
+        for l in self.connected_components():
+            if src in l:
+                c = l
+        if dest not in c:
+            return None
+                
+        chem = [[src]]
+        while not arret(chem, dest):
+            q = []
+            for p in chem:
+                u = p[-1]
+                if u == dest:
+                    q.append(p)
+                else:
+                    for t in self.graph[u]:
+                        if not (t[0] in p) and power>= t[1]:
+                            v = [i for i in p]
+                            v.append(t[0])
+                            q.append(v)
+            chem= q
+        if len(chem) == 0:
+            return None
+        else:
+            return chem[0]
+# Fin Q3
 
+
+    def get_all_path_with_power(self, src, dest, power):
         def arret(l, dest):
             for i in l:
                 if i[-1] is not dest : 
@@ -92,8 +121,59 @@ class Graph:
             return None
         else:
             return chem
+
+
+# Question 5
+    def get_path_min_dist(self, src, dest, power):
+        les_chemins = self.get_all_path_with_power(src, dest, power)
+        def dist_trip(l): 
+            d = 0   
+            for i in range(len(l)-1):
+                for j in g.graph[l[i]]:
+                    if j[0] == l[i+1]:
+                        d += j[2]
+            return d
+        d_min = min([dist_trip(l) for l in les_chemins])
+        les_chemins_min = []
+        for t in les_chemins:
+            if dist_trip(t) == d_min:
+                les_chemins_min.append(t)
+        return les_chemins_min, d_min
+    
+# Fin Q5
+
+
+# Question 6
+
+    def min_power(self, src, dest):
+        def power_trip(l): 
+            w = 0   
+            for i in range(len(l)-1):
+                for j in self.graph[l[i]]:
+                    if j[0] == l[i+1] and j[1] >= w:
+                        w = j[1]            
+            return w
+
+        les_chemins_min = []
+        les_chemins = self.get_all_path_with_power(src, dest, power = math.inf)
+        p_min = min([power_trip(l) for l in les_chemins])
+        for l in les_chemins:
+            if power_trip(l) == p_min:
+                les_chemins_min.append(l)
+        return les_chemins_min, p_min
+    
+# Fin Q6
+
+
+
+
+
    
-#Question 1 et 4
+
+
+
+
+# Question 1 et 4
 def graph_from_file(filename):
     g = Graph()
     f = open(filename, 'r')
@@ -110,87 +190,22 @@ def graph_from_file(filename):
             g.add_edge(node1, node2, power_min, dist)
     return g
 
-# Question 3 à changer 
-def get_path_with_power(p, t, g): # g est un graph 
 
-    def power_trip(l, g): # l représente un chemin entre deux villes, power trip donne la puissance   
-        w = 0   # minimale qu'il faut pour passer le chemin
-        for i in range(len(l)-1):
-            for j in g.graph[l[i]]:
-                if j[0] == l[i+1] and j[1] >= w:
-                    w = j[1]
-                    break
-        return w
 
-    for l in g.connected_components():   # ici je vérifie c'est les deux villes sont dans la meme composante
-        if t[0] in l :
-            if t[1] in l:
-                break
-            else:
-                return None
-    les_chemins = []
-    def chemin(ville1, ville2, l):   
-        if ville1 not in l:          
-            l.append(ville1)
-            for v in g.is_direction(ville1, ville2):
-                if v == ville2:
-                    if power_trip(l + [ville2], g) <= p:
-                        l.append(ville2)
-                        les_chemins.append(l)
-                        break
 
-                chemin(v, ville2, l)
-
-    chemin(t[0], t[1], l = [])
-
-    if len(les_chemins) != 0:
-        return les_chemins
-    else:
-        return None
-
-#Question 5
-def get_path_with_power_dist(p, t, g):
-    les_chemins = get_path_with_power(p, t, g)
-    def dist_trip(l): 
-        d = 0   
-        for i in range(len(l)-1):
-            for j in g.graph[l[i]]:
-                if j[0] == l[i+1]:
-                    d += j[2]
-        return d
-    d_min = min([dist_trip(l) for l in les_chemins])
-    les_chemins_min = []
-    for t in les_chemins:
-        if dist_trip(t) == d_min:
-            les_chemins_min.append(t)
-    return les_chemins_min, d_min
-    
-#Question 6
-def min_power(t, g):
-    def power_trip(l): 
-        w = 0   
-        for i in range(len(l)-1):
-            for j in g.graph[l[i]]:
-                if j[0] == l[i+1] and j[1] >= w:
-                    w = j[1]            
-        return w
-
-    les_chemins_min = []
-    les_chemins = get_path_with_power(math.inf, t, g)
-    p_min = min([power_trip(l) for l in les_chemins])
-    for l in les_chemins:
-        if power_trip(l) == p_min:
-            les_chemins_min.append(l)
-    return les_chemins_min, p_min
     
 
 
 
 
 
-## Séance 2
 
-##Question 3
+
+
+
+#Séance 2 
+
+#Question 3
 
 def sort_edge(g):
     edge = []
@@ -212,5 +227,6 @@ def kruskal(g):
                 array[a[0] - 1] = array[a[1] - 1]
                 tree.graph[a[0]], tree.graph[a[1]] = a[1], a[0]           
     return tree.graph
+
 
 
