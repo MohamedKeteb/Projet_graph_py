@@ -68,6 +68,7 @@ def graph_from_file(filename):
     lines = f.readlines()
     g.nb_nodes, g.nb_edges = map(int, lines[0].split())
     g.nodes = [i for i in range(1, g.nb_nodes + 1)]
+    g.graph = dict([(n, []) for n in g.nodes])
     for i in range(1, len(lines)):
         if len(lines[i].split()) == 3:
             node1, node2, power_min = map(int, lines[i].split())

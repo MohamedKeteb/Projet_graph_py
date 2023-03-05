@@ -8,5 +8,4 @@ print(g)
 
 print(g.connected_components_set())
 
-print(min_power((4, 7), g))
-
+print(get_path_with_power(11, (1, 4), g))
