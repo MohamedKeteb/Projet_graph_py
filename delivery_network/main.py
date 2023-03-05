@@ -6,3 +6,7 @@ g = graph_from_file(filename)
 
 print(g)
 
+print(g.connected_components_set())
+
+print(min_power((4, 7), g))
+
