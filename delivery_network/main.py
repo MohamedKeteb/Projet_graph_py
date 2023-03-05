@@ -9,6 +9,6 @@ print(g)
 
 print(g.connected_components_set())
 
-print(g.min_power(1, 2))
+print(g.get_path_min_dist(1, 4, 11))
 
-
+print(g.min_power(1, 4))

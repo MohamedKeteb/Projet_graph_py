@@ -125,11 +125,12 @@ class Graph:
 
 # Question 5
     def get_path_min_dist(self, src, dest, power):
+        assert self.get_all_path_with_power(src, dest, power) != None, "Puissance insuffisante pour couvrir le Trajet!!!"
         les_chemins = self.get_all_path_with_power(src, dest, power)
         def dist_trip(l): 
             d = 0   
             for i in range(len(l)-1):
-                for j in g.graph[l[i]]:
+                for j in self.graph[l[i]]:
                     if j[0] == l[i+1]:
                         d += j[2]
             return d
