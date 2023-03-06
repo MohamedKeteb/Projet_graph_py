@@ -1,4 +1,5 @@
 #"Projet Prog"
+from time import perf_counter
 import math
 class Graph:
     def __init__(self, nodes=[]):
@@ -206,6 +207,24 @@ def graph_from_file(filename):
 
 
 #Séance 2 
+
+
+#Question 1 
+
+def time_min_power(network):
+    filename = "input/"+ network
+    g = graph_from_file(filename)
+    x = network.split('.')[1]
+    f = open("input/"+ 'routes.' + str(x) + '.in', 'r')
+    lines = f.readlines()
+    nb_trajet = len(lines)
+    t_start  = perf_counter()
+    for i in range(1, 3):
+        src, dest, _ = map(int, lines[i].split())
+        g.min_power(src, dest)
+    t_stop = perf_counter()
+    return (t_start - t_stop)*nb_trajet/10
+
 
 #Question 3
 
