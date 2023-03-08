@@ -215,15 +215,21 @@ def time_min_power(network):
     filename = "input/"+ network
     g = graph_from_file(filename)
     x = network.split('.')[1]
+
     f = open("input/"+ 'routes.' + str(x) + '.in', 'r')
     lines = f.readlines()
+
     nb_trajet = len(lines)
+
     t_start  = perf_counter()
+
     for i in range(1, 3):
         src, dest, _ = map(int, lines[i].split())
         g.min_power(src, dest)
+
     t_stop = perf_counter()
-    return (t_start - t_stop)*nb_trajet/10
+    
+    return (t_start - t_stop)*nb_trajet/2
 
 
 #Question 3
@@ -232,22 +238,45 @@ def sort_edge(g):
     edge = []
     for v in g.graph.keys(): 
         for e in g.graph[v]:
-            if (e[0], v, e[1]) in edge:
+            if (e[0], v, e[1], e[2]) in edge:
                 continue
-            edge.append((v, e[0], e[1]))
+            edge.append((v, e[0], e[1], e[2]))
     edge.sort(key= lambda x: x[2])
     return edge
 
+class ensemble_disj:
+
+    parent = {}
+    def __init__(self, N):
+        for i in range(1, N+1):
+            self.parent[i] = i
+    def get_represent(self, k):
+        if self.parent[k] == k:
+            return k
+        return self.get_represent(self.parent[k])
+    def union(self, a, b):
+        x = self.get_represent(a)
+        y = self.get_represent(b)
+        self.parent[x] = y
+
 def kruskal(g):
-    tree = Graph(g.nodes)
-    array = g.nodes
-    edge  = sort_edge(g)
-    while array != [edge[0][0]]*g.nb_nodes:
-        for a in edge:
-            if array[a[0] - 1] != array[a[1] - 1]:
-                array[a[0] - 1] = array[a[1] - 1]
-                tree.graph[a[0]], tree.graph[a[1]] = a[1], a[0]           
-    return tree.graph
+    mst = Graph()
+    ed = ensemble_disj(g.nb_nodes)
+    i = 0
+    edge = sort_edge(g)
+
+    while len(mst.graph) != g.nb_nodes - 1:
+
+        (src, dest, power) = g[i]
+        i += 1
+
+        x = ed.get_represent(src)
+        y = ed.get_represent(dest)
+
+        if x != y:
+            mst.graph[src].append((dest, power))
+
+
 
 
 
