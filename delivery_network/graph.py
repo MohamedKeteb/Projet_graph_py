@@ -259,13 +259,13 @@ class ensemble_disj:
         self.parent[x] = y
 
 def kruskal(g):
-    g_mst = Graph(g.nodes)
     ed = ensemble_disj(g.nb_nodes)
     i = 0
     edge = sort_edge(g)
+    g_mst = Graph(g.nodes)
     tree = []
     while len(tree) != g.nb_nodes - 1:
-        src, dest, power, dist = edge[i]
+        src, dest, power, dist= edge[i]
 
         x = ed.get_represent(src - 1)
         y = ed.get_represent(dest - 1)
@@ -273,11 +273,10 @@ def kruskal(g):
         if x != y:
 
             tree.append(edge[i])
-            g_mst.graph[src].append((dest, power, dist))
-            g_mst.graph[dest].append((src, power, dist))
+            g_mst.graph[src].append((dest, power, dist ))
+            g_mst.graph[dest].append((src, power, dist ))
             ed.union(x, y)
         i+= 1
-
     return g_mst
 
 
