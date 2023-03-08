@@ -20,17 +20,17 @@ class Graph:
                 output += f"{source}-->{destination}\n"
         return output
     
-    def add_edge(self, node1, node2, power_min, dist=1):
+    def add_edge(self, node1, node2, power, dist=1):
         k = self.graph.keys()
         if node1 not in k:
-            self.graph[node1] = [(node2, power_min, dist)]
+            self.graph[node1] = [(node2, power, dist)]
         else : 
-            self.graph[node1].append((node2, power_min, dist))
+            self.graph[node1].append((node2, power, dist))
 
         if node2 not in k:
-            self.graph[node2] = [(node1, power_min, dist)]
+            self.graph[node2] = [(node1, power, dist)]
         else : 
-            self.graph[node2].append((node1, power_min, dist))
+            self.graph[node2].append((node1, power, dist))
          
  # Question 2
     def neig(self, node):
@@ -178,19 +178,18 @@ class Graph:
 
 # Question 1 et 4
 def graph_from_file(filename):
-    g = Graph()
     f = open(filename, 'r')
     lines = f.readlines()
-    g.nb_nodes, g.nb_edges = map(int, lines[0].split())
-    g.nodes = [i for i in range(1, g.nb_nodes + 1)]
-    g.graph = dict([(n, []) for n in g.nodes])
+    nb_nodes, nb_edges = map(int, lines[0].split())
+    g = Graph([i for i in range(1, nb_nodes + 1)])
+    g.nb_edges = nb_edges
     for i in range(1, len(lines)):
         if len(lines[i].split()) == 3:
-            node1, node2, power_min = map(int, lines[i].split())
-            g.add_edge(node1, node2, power_min)
+            node1, node2, power = map(int, lines[i].split())
+            g.add_edge(node1, node2, power)
         else:
-            node1, node2, power_min, dist = map(int, lines[i].split())
-            g.add_edge(node1, node2, power_min, dist)
+            node1, node2, power, dist = map(int, lines[i].split())
+            g.add_edge(node1, node2, power, dist)
     return g
 
 
@@ -248,7 +247,7 @@ class ensemble_disj:
 
     parent = {}
     def __init__(self, N):
-        for i in range(1, N+1):
+        for i in range(N):
             self.parent[i] = i
     def get_represent(self, k):
         if self.parent[k] == k:
@@ -260,21 +259,27 @@ class ensemble_disj:
         self.parent[x] = y
 
 def kruskal(g):
-    mst = Graph()
+    g_mst = Graph(g.nodes)
     ed = ensemble_disj(g.nb_nodes)
     i = 0
     edge = sort_edge(g)
+    tree = []
+    while len(tree) != g.nb_nodes - 1:
+        src, dest, power, dist = edge[i]
 
-    while len(mst.graph) != g.nb_nodes - 1:
-
-        (src, dest, power) = g[i]
-        i += 1
-
-        x = ed.get_represent(src)
-        y = ed.get_represent(dest)
+        x = ed.get_represent(src - 1)
+        y = ed.get_represent(dest - 1)
 
         if x != y:
-            mst.graph[src].append((dest, power))
+
+            tree.append(edge[i])
+            g_mst.graph[src].append((dest, power, dist))
+            g_mst.graph[dest].append((src, power, dist))
+            ed.union(x, y)
+        i+= 1
+
+    return g_mst
+
 
 
 
