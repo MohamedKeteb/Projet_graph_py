@@ -333,11 +333,31 @@ def kruskal(g):
 
             tree.append(edge[i])
             g_mst.graph[src].append((dest, power, dist ))
-            g_mst.graph[dest].append((src, power, dist ))
             ed.union(x, y)
         i+= 1
     return g_mst
 
+
+#Fin Q3
+
+#Question 4 
+#Fin Question 4 
+
+
+
+# Q5
+
+def min_power_mst(g, src, dest):
+    mst_g = kruskal(g)
+    def deep_parcour_mst(self,node,l):
+        if node not in l:
+            l.append(node)
+            for w in self.neig(node):
+                self.deep_parcour(w, l)
+        return l 
+    pass
+
+    
 
 
 

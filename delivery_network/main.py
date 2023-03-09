@@ -5,5 +5,4 @@ network = "network.1.in"
 g = graph_from_file(filename)
 
 print(g)
-
-print(time_min_power(network))
+print(kruskal(g))
