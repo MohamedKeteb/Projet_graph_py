@@ -6,6 +6,4 @@ g = graph_from_file(filename)
 
 print(g)
 
-print(g.connected_components_set())
-print(sort_edge(g))
-print(kruskal(g))
+print(g.dijk(2, 3, 6))

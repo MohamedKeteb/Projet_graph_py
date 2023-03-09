@@ -94,29 +94,39 @@ class Graph:
 # Question 3 avec Dijkstra
 
     def dijk(self, src, dest, power):
-        chemin = []
-        def chem(i, d):
-            chemin.append(d[i])
-            chem(d[i], d)
+        
+        def chem(i):
+            chemin = [i]
+            while i != src:
+                chemin.append(precedent[i])
+                i = precedent[i]
+            chemin.reverse()
+            return chemin
 
-        precedent = {x: None for x in self.keys()}
-        visited = {x : False for x in self.keys()}
-        distance = {x : math.inf for x in self.keys()}
+
+        precedent = {x: None for x in self.graph.keys()}
+        visited = {x : False for x in self.graph.keys()}
+        distance = {x : math.inf for x in self.graph.keys()}
         distance[src] = 0
         to_visit = [(src, 0)]
         while to_visit:
-            dist_node, node = to_visit.pop()
+            print(to_visit)
+            node, dist_node = to_visit.pop()
             if not visited[node]:
-                for v in self.neig(node):
+                visited[node] = True 
+                for v in self.graph[node] :
                     dist_v = dist_node + v[2]
-                    if dist_v < distance[v] and power >= v[1]:
+                    if dist_v < distance[v[0]] and power >= v[1]:
                         distance[v[0]] = dist_v
                         precedent[v[0]] = node
-                        to_visit.append((dist_v, v[0]))
-        if distance[dest] == math.inf :
+                        to_visit.append((v[0], dist_v))
+            to_visit.sort(reverse=True)
+
+        if distance[dest] == math.inf:
             return None
-        else:
-            return 
+        else :     
+            return chem(dest)
+        
 
 
 
