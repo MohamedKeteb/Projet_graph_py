@@ -281,13 +281,13 @@ def time_min_power(network):
 
     t_start  = perf_counter()
 
-    for i in range(1, 3):
+    for i in range(1, 10):
         src, dest, _ = map(int, lines[i].split())
-        g.min_power(src, dest)
+        g.min_power_bis(src, dest)
 
     t_stop = perf_counter()
     
-    return (t_start - t_stop)*nb_trajet/2
+    return (t_stop - t_start)*nb_trajet/10
 
 
 #Question 3
