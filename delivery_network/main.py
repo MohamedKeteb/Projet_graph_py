@@ -6,4 +6,4 @@ g = graph_from_file(filename)
 
 print(g)
 
-print(g.dijk(2, 3, 6))
+print(g.min_power_bis(1, 10))

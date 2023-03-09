@@ -207,6 +207,25 @@ class Graph:
     
 # Fin Q6
 
+# Q 6 min power par dichotomie
+
+    def min_power_bis(self, src, dest):
+        
+            i=0
+            while self.get_path_with_power(src,dest,2**i) == None:
+                i+=1
+            l = [j for j in range(2**i+1)]
+            a = 0
+            b = len(l)-1
+            m = (a+b)//2
+            while a < b :
+                if self.get_path_with_power(src,dest,l[m]) != None:
+                    b=m
+                else:
+                    a=m+1
+                m=(a+b)//2
+            return self.get_path_with_power(src,dest,l[a]),a
+
 
 
 
