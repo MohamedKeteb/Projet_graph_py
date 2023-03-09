@@ -91,6 +91,36 @@ class Graph:
             return chem[0]
 # Fin Q3
 
+# Question 3 avec Dijkstra
+
+    def dijk(self, src, dest, power):
+        chemin = []
+        def chem(i, d):
+            chemin.append(d[i])
+            chem(d[i], d)
+
+        precedent = {x: None for x in self.keys()}
+        visited = {x : False for x in self.keys()}
+        distance = {x : math.inf for x in self.keys()}
+        distance[src] = 0
+        to_visit = [(src, 0)]
+        while to_visit:
+            dist_node, node = to_visit.pop()
+            if not visited[node]:
+                for v in self.neig(node):
+                    dist_v = dist_node + v[2]
+                    if dist_v < distance[v] and power >= v[1]:
+                        distance[v[0]] = dist_v
+                        precedent[v[0]] = node
+                        to_visit.append((dist_v, v[0]))
+        if distance[dest] == math.inf :
+            return None
+        else:
+            return 
+
+
+
+
 
     def get_all_path_with_power(self, src, dest, power):
         def arret(l, dest):
@@ -122,7 +152,7 @@ class Graph:
         if len(chem) == 0:
             return None
         else:
-            return chem
+            return chem()
 
 
 # Question 5
