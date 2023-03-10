@@ -212,19 +212,19 @@ class Graph:
     def min_power_bis(self, src, dest):
         
             i=0
-            while self.get_path_with_power(src,dest,2**i) == None:
+            while self.get_path_with_powerr(src,dest,2**i) == None:
                 i+=1
             l = [j for j in range(2**i+1)]
             a = 0
             b = len(l)-1
             m = (a+b)//2
             while a < b :
-                if self.get_path_with_power(src,dest,l[m]) != None:
+                if self.get_path_with_powerr(src,dest,l[m]) != None:
                     b=m
                 else:
                     a=m+1
                 m=(a+b)//2
-            return self.get_path_with_power(src,dest,l[a]),a
+            return self.get_path_with_powerr(src,dest,l[a]),a
 
     def get_path_with_powerr(self,src,dest,power):
         pile = [(src, [src], set())]
@@ -330,26 +330,31 @@ class ensemble_disj:
         self.parent[x] = y
 
 def kruskal(g):
-    ed = ensemble_disj(g.nb_nodes)
-    i = 0
-    edge = sort_edge(g)
-    g_mst = Graph(g.nodes)
-    tree = []
-    while len(tree) != g.nb_nodes - 1:
-        src, dest, power, dist= edge[i]
+    if len(g.connected_components_set()) == 1:
+        ed = ensemble_disj(g.nb_nodes)
+        i = 0
+        edge = sort_edge(g)
+        g_mst = Graph(g.nodes)
+        tree = []
+        while len(tree) != g.nb_nodes - 1:
+            src, dest, power, dist= edge[i]
 
-        x = ed.get_represent(src - 1)
-        y = ed.get_represent(dest - 1)
+            x = ed.get_represent(src - 1)
+            y = ed.get_represent(dest - 1)
 
-        if x != y:
+            if x != y:
 
-            tree.append(edge[i])
-            g_mst.graph[src].append((dest, power, dist ))
-            g_mst.graph[dest].append((src, power, dist ))
+                tree.append(edge[i])
+                g_mst.graph[src].append((dest, power, dist ))
+                g_mst.graph[dest].append((src, power, dist ))
 
-            ed.union(x, y)
-        i+= 1
-    return g_mst
+                ed.union(x, y)
+            i+= 1
+        return g_mst
+    else:
+        return None
+    
+    
 
 
 #Fin Q3
