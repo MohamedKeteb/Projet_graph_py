@@ -7,6 +7,8 @@ class Graph:
         self.graph = dict([(n, []) for n in nodes])
         self.nb_nodes = len(nodes)
         self.nb_edges = 0
+        self.min_edge= float('inf')
+        self.max_edge = 0 
     
 
 
@@ -20,8 +22,13 @@ class Graph:
                 output += f"{source}-->{destination}\n"
         return output
     
+
     def add_edge(self, node1, node2, power, dist=1):
         k = self.graph.keys()
+        if power <= self.min_edge:
+            self.min_edge = power
+        if power >= self.max_edge:
+            self.max_edge = power
         if node1 not in k:
             self.graph[node1] = [(node2, power, dist)]
         else : 
@@ -211,12 +218,25 @@ class Graph:
 
     def min_power_bis(self, src, dest):
         
+
+        
+            a = self.min_edge
+            b = self.max_edge
+            m = (a+b)//2
+            while a < b :
+                if self.get_path_with_powerr(src,dest,m) != None:
+                    b=m
+                else:
+                    a=m+1
+                m=(a+b)//2
+            return self.get_path_with_powerr(src,dest,a),a
+    
+    def min_power_bis_1(self, src, dest):
+        
             i=0
-            while self.get_path_with_powerr(src,dest,2**i) == None:
-                i+=1
-            l = [j for j in range(2**i+1)]
-            a = 0
-            b = len(l)-1
+            l = [d  for _, d, _ in list(g.graph.items())]
+            a = min(l)
+            b = max(l)
             m = (a+b)//2
             while a < b :
                 if self.get_path_with_powerr(src,dest,l[m]) != None:
@@ -330,31 +350,32 @@ class ensemble_disj:
         self.parent[x] = y
 
 def kruskal(g):
-    if len(g.connected_components_set()) == 1:
-        ed = ensemble_disj(g.nb_nodes)
-        i = 0
-        edge = sort_edge(g)
-        g_mst = Graph(g.nodes)
-        tree = []
-        while len(tree) != g.nb_nodes - 1:
-            src, dest, power, dist= edge[i]
-
-            x = ed.get_represent(src - 1)
-            y = ed.get_represent(dest - 1)
-
-            if x != y:
-
-                tree.append(edge[i])
-                g_mst.graph[src].append((dest, power, dist ))
-                g_mst.graph[dest].append((src, power, dist ))
-
-                ed.union(x, y)
-            i+= 1
-        return g_mst
-    else:
-        return None
     
+    ed = ensemble_disj(g.nb_nodes)
+    i = 0
+    edge = sort_edge(g)
+    g_mst = Graph(g.nodes)
+    tree = []
+    while len(tree) != g.nb_nodes - 1:
+        src, dest, power, dist= edge[i]
+
+        x = ed.get_represent(src - 1)
+        y = ed.get_represent(dest - 1)
+
+        if x != y:
+
+            tree.append(edge[i])
+            g_mst.graph[src].append((dest, power, dist ))
+            g_mst.graph[dest].append((src, power, dist ))
+
+            ed.union(x, y)
+        i+= 1
+    print("aa")
+    return g_mst
+   
+       
     
+
 
 
 #Fin Q3
