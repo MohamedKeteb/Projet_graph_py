@@ -91,7 +91,7 @@ class Graph:
             return chem[0]
 # Fin Q3
 
-# Question 3 avec Dijkstra
+# Question 5 avec Dijkstra
 
     def dijk(self, src, dest, power):
         
@@ -162,7 +162,7 @@ class Graph:
         if len(chem) == 0:
             return None
         else:
-            return chem()
+            return chem
 
 
 # Question 5
@@ -225,6 +225,18 @@ class Graph:
                     a=m+1
                 m=(a+b)//2
             return self.get_path_with_power(src,dest,l[a]),a
+
+    def get_path_with_powerr(self,src,dest,power):
+        pile = [(src, [src], set())]
+        while pile:
+            node, path, visited = pile.pop()
+            visited.add(node)
+            if node == dest:
+                return path
+            for neighbor in self.graph[node]:
+                if neighbor[0] not in visited and power>=neighbor[1]:
+                    pile.append((neighbor[0], path + [neighbor[0]], visited.copy()))
+        return None
 
 
 
@@ -333,6 +345,8 @@ def kruskal(g):
 
             tree.append(edge[i])
             g_mst.graph[src].append((dest, power, dist ))
+            g_mst.graph[dest].append((src, power, dist ))
+
             ed.union(x, y)
         i+= 1
     return g_mst
@@ -360,6 +374,9 @@ def min_power_mst(g, src, dest):
     
 
 
+
+
+## get_path_with_power DFS 
 
 
 
