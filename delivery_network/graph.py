@@ -22,13 +22,16 @@ class Graph:
                 output += f"{source}-->{destination}\n"
         return output
     
-
-    def add_edge(self, node1, node2, power, dist=1):
-        k = self.graph.keys()
+    def update(self, power):
         if power <= self.min_edge:
             self.min_edge = power
         if power >= self.max_edge:
             self.max_edge = power
+
+
+    def add_edge(self, node1, node2, power, dist=1):
+        self.update(power)
+        k = self.graph.keys()
         if node1 not in k:
             self.graph[node1] = [(node2, power, dist)]
         else : 
@@ -39,7 +42,6 @@ class Graph:
         else : 
             self.graph[node2].append((node1, power, dist))
          
- # Question 2
     def neig(self, node):
         return [j[0] for j in self.graph.get(node)]  
 
@@ -49,6 +51,7 @@ class Graph:
             for w in self.neig(node):
                 self.deep_parcour(w, l)
         return l 
+ # Question 2
 
     def connected_components(self):
         visited = [False] * self.nb_nodes
@@ -64,43 +67,30 @@ class Graph:
     def connected_components_set(self):
         return set(map(frozenset, self.connected_components()))
     
-# Question3
-    def get_path_with_power(self, src, dest, power):
-        def arret(l, dest):
-            for i in l:
-                if i[-1] is not dest : 
-                    return False
-            return True 
-        c = []
-        for l in self.connected_components():
-            if src in l:
-                c = l
-        if dest not in c:
-            return None
-                
-        chem = [[src]]
-        while not arret(chem, dest):
-            q = []
-            for p in chem:
-                u = p[-1]
-                if u == dest:
-                    q.append(p)
-                else:
-                    for t in self.graph[u]:
-                        if not (t[0] in p) and power>= t[1]:
-                            v = [i for i in p]
-                            v.append(t[0])
-                            q.append(v)
-            chem= q
-        if len(chem) == 0:
-            return None
-        else:
-            return chem[0]
-# Fin Q3
+
+# Question 3
+    def get_path_with_power(self,src,dest,power):
+        pile = [(src, [src], set())]
+        while pile:
+            node, path, visited = pile.pop()
+            visited.add(node)
+            if node == dest:
+                return path
+            for neighbor in self.graph[node]:
+                if neighbor[0] not in visited and power>=neighbor[1]:
+                    pile.append((neighbor[0], path + [neighbor[0]], visited.copy()))
+        return None
+
+# Fin question3
+ 
+#Question 4 avec Q1
+
+
+
 
 # Question 5 avec Dijkstra
 
-    def dijk(self, src, dest, power):
+    def get_path_min_dist(self, src, dest, power):
         
         def chem(i):
             chemin = [i]
@@ -132,140 +122,24 @@ class Graph:
         if distance[dest] == math.inf:
             return None
         else :     
-            return chem(dest)
+            return chem(dest), distance[dest]
         
-
-
-
-
-
-    def get_all_path_with_power(self, src, dest, power):
-        def arret(l, dest):
-            for i in l:
-                if i[-1] is not dest : 
-                    return False
-            return True 
-        c = []
-        for l in self.connected_components():
-            if src in l:
-                c = l
-        if dest not in c:
-            return None
-                
-        chem = [[src]]
-        while not arret(chem, dest):
-            q = []
-            for p in chem:
-                u = p[-1]
-                if u == dest:
-                    q.append(p)
-                else:
-                    for t in self.graph[u]:
-                        if not (t[0] in p) and power>= t[1]:
-                            v = [i for i in p]
-                            v.append(t[0])
-                            q.append(v)
-            chem= q
-        if len(chem) == 0:
-            return None
-        else:
-            return chem
-
-
-# Question 5
-    def get_path_min_dist(self, src, dest, power):
-        assert self.get_all_path_with_power(src, dest, power) != None, "Puissance insuffisante pour couvrir le Trajet!!!"
-        les_chemins = self.get_all_path_with_power(src, dest, power)
-        def dist_trip(l): 
-            d = 0   
-            for i in range(len(l)-1):
-                for j in self.graph[l[i]]:
-                    if j[0] == l[i+1]:
-                        d += j[2]
-            return d
-        d_min = min([dist_trip(l) for l in les_chemins])
-        les_chemins_min = []
-        for t in les_chemins:
-            if dist_trip(t) == d_min:
-                les_chemins_min.append(t)
-        return les_chemins_min, d_min
-    
-# Fin Q5
-
-
-# Question 6
-
-    def min_power(self, src, dest):
-        def power_trip(l): 
-            w = 0   
-            for i in range(len(l)-1):
-                for j in self.graph[l[i]]:
-                    if j[0] == l[i+1] and j[1] >= w:
-                        w = j[1]            
-            return w
-
-        les_chemins_min = []
-        les_chemins = self.get_all_path_with_power(src, dest, power = math.inf)
-        p_min = min([power_trip(l) for l in les_chemins])
-        for l in les_chemins:
-            if power_trip(l) == p_min:
-                les_chemins_min.append(l)
-        return les_chemins_min, p_min
-    
-# Fin Q6
 
 # Q 6 min power par dichotomie
 
-    def min_power_bis(self, src, dest):
-        
-
-        
+    def min_power(self, src, dest):
             a = self.min_edge
             b = self.max_edge
             m = (a+b)//2
             while a < b :
-                if self.get_path_with_powerr(src,dest,m) != None:
+                if self.get_path_with_power(src,dest,m) != None:
                     b=m
                 else:
                     a=m+1
                 m=(a+b)//2
-            return self.get_path_with_powerr(src,dest,a),a
+            return self.get_path_with_power(src,dest,a),a
     
-    def min_power_bis_1(self, src, dest):
-        
-            i=0
-            l = [d  for _, d, _ in list(g.graph.items())]
-            a = min(l)
-            b = max(l)
-            m = (a+b)//2
-            while a < b :
-                if self.get_path_with_powerr(src,dest,l[m]) != None:
-                    b=m
-                else:
-                    a=m+1
-                m=(a+b)//2
-            return self.get_path_with_powerr(src,dest,l[a]),a
-
-    def get_path_with_powerr(self,src,dest,power):
-        pile = [(src, [src], set())]
-        while pile:
-            node, path, visited = pile.pop()
-            visited.add(node)
-            if node == dest:
-                return path
-            for neighbor in self.graph[node]:
-                if neighbor[0] not in visited and power>=neighbor[1]:
-                    pile.append((neighbor[0], path + [neighbor[0]], visited.copy()))
-        return None
-
-
-
-
-
-   
-
-
-
+# Fin Q6
 
 # Question 1 et 4
 def graph_from_file(filename):
@@ -287,7 +161,7 @@ def graph_from_file(filename):
 
 
     
-
+# Question8 dans le ficier test_s1q8
 
 
 
@@ -370,7 +244,6 @@ def kruskal(g):
 
             ed.union(x, y)
         i+= 1
-    print("aa")
     return g_mst
    
        
