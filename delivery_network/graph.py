@@ -35,18 +35,12 @@ class Graph:
         self.graph[node2].append((node1, power, dist))
         self.nb_edges += 1
          
-    def neig(self, node):
-        return [j[0] for j in self.graph.get(node)]  
+ 
 
-    def deep_parcour(self,node,l):
-        if node not in l:
-            l.append(node)
-            for w in self.neig(node):
-                self.deep_parcour(w, l)
-        return l 
+    
  # Question 2
 
-    def connected_components_bfs(self):
+    def connected_components(self):
         def bfs(start_node, visited):
             component = []
             queue = deque([start_node])
@@ -70,7 +64,7 @@ class Graph:
 # fin Q2
 
     def connected_components_set(self):
-        return set(map(frozenset, self.connected_components_bfs()))
+        return set(map(frozenset, self.connected_components()))
     
 
 # Question 3
@@ -138,7 +132,7 @@ class Graph:
 
     def min_power(self, src, dest):
         c = []
-        for i in self.connected_components_bfs():
+        for i in self.connected_components():
             if src or dest in i:
                 c = i
                 break
@@ -169,6 +163,7 @@ def graph_from_file(filename):
     for i in range(1, len(lines)):
         if len(lines[i].split()) == 3:
             node1, node2, power = map(int, lines[i].split())
+
             g.add_edge(node1, node2, power)
             g.edges.append((node1, node2, power, 1))
             if power not in g.power:
@@ -213,11 +208,12 @@ def time_min_power(network):
 
     for i in range(1, 10):
         src, dest, _ = map(int, lines[i].split())
-        g.min_power_bis(src, dest)
+        g.min_power(src, dest)
 
     t_stop = perf_counter()
     
     return (t_stop - t_start)*nb_trajet/10
+
 
 
 #Question 3
