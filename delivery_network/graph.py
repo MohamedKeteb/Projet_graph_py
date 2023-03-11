@@ -4,11 +4,14 @@ import math
 class Graph:
     def __init__(self, nodes=[]):
         self.nodes = nodes
+        self.edges = []
+        self.power = []
         self.graph = dict([(n, []) for n in nodes])
         self.nb_nodes = len(nodes)
         self.nb_edges = 0
-        self.min_edge= float('inf')
-        self.max_edge = 0 
+
+
+        
     
 
 
@@ -21,26 +24,15 @@ class Graph:
             for source, destination in self.graph.items():
                 output += f"{source}-->{destination}\n"
         return output
-    
-    def update(self, power):
-        if power <= self.min_edge:
-            self.min_edge = power
-        if power >= self.max_edge:
-            self.max_edge = power
 
 
+# -- 
     def add_edge(self, node1, node2, power, dist=1):
-        self.update(power)
-        k = self.graph.keys()
-        if node1 not in k:
-            self.graph[node1] = [(node2, power, dist)]
-        else : 
-            self.graph[node1].append((node2, power, dist))
+            
 
-        if node2 not in k:
-            self.graph[node2] = [(node1, power, dist)]
-        else : 
-            self.graph[node2].append((node1, power, dist))
+        self.graph[node1].append((node2, power, dist))
+        self.graph[node2].append((node1, power, dist))
+        self.nb_edges += 1
          
     def neig(self, node):
         return [j[0] for j in self.graph.get(node)]  
@@ -128,16 +120,18 @@ class Graph:
 # Q 6 min power par dichotomie
 
     def min_power(self, src, dest):
-            a = self.min_edge
-            b = self.max_edge
+            p = self.power
+            p.sort()
+            a = 0
+            b = len(p)-1
             m = (a+b)//2
             while a < b :
-                if self.get_path_with_power(src,dest,m) != None:
+                if self.get_path_with_power(src,dest,p[m]) != None:
                     b=m
                 else:
                     a=m+1
                 m=(a+b)//2
-            return self.get_path_with_power(src,dest,a),a
+            return self.get_path_with_power(src,dest,p[a]),p[a]
     
 # Fin Q6
 
@@ -145,16 +139,21 @@ class Graph:
 def graph_from_file(filename):
     f = open(filename, 'r')
     lines = f.readlines()
-    nb_nodes, nb_edges = map(int, lines[0].split())
+    nb_nodes, _ = map(int, lines[0].split())
     g = Graph([i for i in range(1, nb_nodes + 1)])
-    g.nb_edges = nb_edges
     for i in range(1, len(lines)):
         if len(lines[i].split()) == 3:
             node1, node2, power = map(int, lines[i].split())
             g.add_edge(node1, node2, power)
+            g.edges.append((node1, node2, power, 1))
+            if power not in g.power:
+                g.power.append(power)
         else:
             node1, node2, power, dist = map(int, lines[i].split())
             g.add_edge(node1, node2, power, dist)
+            g.edges.append((node1, node2, power, dist))
+            if power not in g.power:
+                g.power.append(power)
     return g
 
 
@@ -198,84 +197,55 @@ def time_min_power(network):
 
 #Question 3
 
-def sort_edge(g):
-    edge = []
-    for v in g.graph.keys(): 
-        for e in g.graph[v]:
-            if (e[0], v, e[1], e[2]) in edge:
-                continue
-            edge.append((v, e[0], e[1], e[2]))
-    edge.sort(key= lambda x: x[2])
-    return edge
 
-class ensemble_disj:
-
-    parent = {}
-    def __init__(self, N):
-        for i in range(N):
-            self.parent[i] = i
-    def get_represent(self, k):
-        if self.parent[k] == k:
-            return k
-        return self.get_represent(self.parent[k])
-    def union(self, a, b):
-        x = self.get_represent(a)
-        y = self.get_represent(b)
-        self.parent[x] = y
-
-def kruskal(g):
-    
-    ed = ensemble_disj(g.nb_nodes)
-    i = 0
-    edge = sort_edge(g)
-    g_mst = Graph(g.nodes)
-    tree = []
-    while len(tree) != g.nb_nodes - 1:
-        src, dest, power, dist= edge[i]
-
-        x = ed.get_represent(src - 1)
-        y = ed.get_represent(dest - 1)
-
-        if x != y:
-
-            tree.append(edge[i])
-            g_mst.graph[src].append((dest, power, dist ))
-            g_mst.graph[dest].append((src, power, dist ))
-
-            ed.union(x, y)
-        i+= 1
-    return g_mst
-   
-       
-    
-
-
+class UnionFind:
+    def __init__(self, n):
+        self.parent = list(range(n))
+        self.rank = [0] * n
+        
+    def get_parent(self, x):
+        if self.parent[x] != x:
+            self.parent[x] = self.get_parent(self.parent[x])
+        return self.parent[x]
+        
+    def Union(self, x, y):
+        root_x, root_y = self.get_parent(x), self.get_parent(y)
+        if root_x != root_y:
+            if self.rank[root_x] > self.rank[root_y]:
+                self.parent[root_y] = root_x
+            else:
+                self.parent[root_x] = root_y
+                if self.rank[root_x] == self.rank[root_y]:
+                    self.rank[root_y] += 1
 
 #Fin Q3
 
-#Question 4 
-#Fin Question 4 
+def kruskal(g):
+    ed = UnionFind(g.nb_nodes)
+    i = 0
+    edges = g.edges
+    edges.sort(key = lambda x : x[2])
+    g_mst = Graph(g.nodes)
+    while g_mst.nb_edges != g.nb_nodes - 1:
+        src, dest, power, dist= edges[i]
+
+        x = ed.get_parent(src - 1)
+        y = ed.get_parent(dest - 1)
+
+        if x != y:
+            g_mst.add_edge(src, dest, power, dist)
+            ed.Union(x, y)
+
+        i+= 1
+    return g_mst
 
 
-
-# Q5
-
-def min_power_mst(g, src, dest):
-    mst_g = kruskal(g)
-    def deep_parcour_mst(self,node,l):
-        if node not in l:
-            l.append(node)
-            for w in self.neig(node):
-                self.deep_parcour(w, l)
-        return l 
-    pass
 
     
 
 
 
 
-## get_path_with_power DFS 
 
 
 
