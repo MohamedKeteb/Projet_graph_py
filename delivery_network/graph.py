@@ -1,4 +1,5 @@
 #"Projet Prog"
+from collections import deque
 from time import perf_counter
 import math
 class Graph:
@@ -45,36 +46,52 @@ class Graph:
         return l 
  # Question 2
 
-    def connected_components(self):
-        visited = [False] * self.nb_nodes
-        component = []
-        for i in range(self.nb_nodes):
-            if not visited[i] : 
-                component.append(self.deep_parcour(i+1, l=[]))
-                for j in self.deep_parcour(i+1, l = []):
-                    visited[j-1] = True 
-        return component
+    def connected_components_bfs(self):
+        def bfs(start_node, visited):
+            component = []
+            queue = deque([start_node])
+            visited[start_node] = True
+            while queue:
+                node = queue.popleft()
+                component.append(node)
+                for neighbor in self.graph[node]:
+                    if not visited[neighbor[0]]:
+                        visited[neighbor[0]] = True
+                        queue.append(neighbor[0])
+            return component
+        visited = {node:False for node in self.nodes}
+        components = []
+        for node in self.nodes:
+            if not visited[node]:
+                component = bfs(node, visited)
+                components.append(component)
+        return components
+    
 # fin Q2
 
     def connected_components_set(self):
-        return set(map(frozenset, self.connected_components()))
+        return set(map(frozenset, self.connected_components_bfs()))
     
 
 # Question 3
+    
+
+
     def get_path_with_power(self,src,dest,power):
-        pile = [(src, [src], set())]
-        while pile:
-            node, path, visited = pile.pop()
-            visited.add(node)
+        queue = deque([(src, [src])])
+        visited = set([src])
+        while queue:
+            node, path = queue.popleft()
             if node == dest:
                 return path
             for neighbor in self.graph[node]:
                 if neighbor[0] not in visited and power>=neighbor[1]:
-                    pile.append((neighbor[0], path + [neighbor[0]], visited.copy()))
+                    visited.add(neighbor[0])
+                    queue.append((neighbor[0], path + [neighbor[0]]))
         return None
 
 # Fin question3
- 
+
 #Question 4 avec Q1
 
 
@@ -120,6 +137,12 @@ class Graph:
 # Q 6 min power par dichotomie
 
     def min_power(self, src, dest):
+        c = []
+        for i in self.connected_components_bfs():
+            if src or dest in i:
+                c = i
+                break
+        if src in c and dest in c : 
             p = self.power
             p.sort()
             a = 0
@@ -132,6 +155,8 @@ class Graph:
                     a=m+1
                 m=(a+b)//2
             return self.get_path_with_power(src,dest,p[a]),p[a]
+        else:
+            raise ValueError('Trajet impossible')
     
 # Fin Q6
 
@@ -221,27 +246,32 @@ class UnionFind:
 #Fin Q3
 
 def kruskal(g):
-    ed = UnionFind(g.nb_nodes)
-    i = 0
-    edges = g.edges
-    edges.sort(key = lambda x : x[2])
-    g_mst = Graph(g.nodes)
-    while g_mst.nb_edges != g.nb_nodes - 1:
-        src, dest, power, dist= edges[i]
+    if len(g.connected_components_set()) == 1:
+        ed = UnionFind(g.nb_nodes)
+        i = 0
+        edges = g.edges
+        edges.sort(key = lambda x : x[2])
+        g_mst = Graph(g.nodes)
+        while g_mst.nb_edges != g.nb_nodes - 1:
+            src, dest, power, dist= edges[i]
 
-        x = ed.get_parent(src - 1)
-        y = ed.get_parent(dest - 1)
+            x = ed.get_parent(src - 1)
+            y = ed.get_parent(dest - 1)
 
-        if x != y:
-            g_mst.add_edge(src, dest, power, dist)
-            ed.Union(x, y)
+            if x != y:
+                g_mst.add_edge(src, dest, power, dist)
+                ed.Union(x, y)
 
-        i+= 1
-    return g_mst
+            i+= 1
+        return g_mst
+    else:
+        raise ValueError('g non connexe')
 
 
 
-    
+
+
+
 
 
 
