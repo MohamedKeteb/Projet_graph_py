@@ -268,6 +268,28 @@ def kruskal(g):
         raise ValueError('g non connexe')
 
 
+# 4
+
+def get_path_mst(mst,src,dest):
+        queue = deque([(src, [(src, -1)])])
+        visited = set([src])
+        while queue:
+            node, path = queue.popleft()
+            if node == dest:
+                l = path
+            for neighbor in mst.graph[node]:
+                if neighbor[0] not in visited :
+                    visited.add(neighbor[0])
+                    queue.append((neighbor[0], path + [(neighbor[0], neighbor[1])]))
+        list_power = [l[i][1] for i in range(len(l))]
+        powermin = max(list_power)
+        min_path = [l[i][0] for i in range(len(l))]
+
+        return min_path, powermin
+
+
+
+
 
 
 
