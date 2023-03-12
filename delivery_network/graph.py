@@ -132,7 +132,6 @@ class Graph:
 
     def min_power(self, src, dest):
         if self.get_path_with_power(src, dest, float('inf')) != None:
-            print(1)
             p = self.power
             p.sort()
             a = 0
@@ -174,6 +173,29 @@ def graph_from_file(filename):
                 g.power.append(power)
         else:
             raise Exception('Format incorrect')
+    return g
+
+
+def graph_from_file_bis(filename):
+    with open(filename, "r") as file:
+        n, m = map(int, file.readline().split())
+        g = Graph(range(1, n+1))
+        for _ in range(m):
+            edge = file.readline().split()
+            if len(edge) == 3:
+                node1, node2, power_min = int(edge[0]),int(edge[1]),int(edge[2])
+                g.add_edge(node1, node2, power_min) # will add dist=1 by default
+                g.edges.append((node1, node2, power_min,1))
+                if power_min not in g.power:
+                    g.power.append(power_min)
+            elif len(edge) == 4:
+                node1, node2, power_min, dist = int(edge[0]),int(edge[1]),int(edge[2]),float(edge[3]) #Pour pouvoir lire 10
+                g.add_edge(node1, node2, power_min, dist)
+                g.edges.append((node1, node2, power_min,dist))
+                if power_min not in g.power:
+                    g.power.append(power_min)
+            else:
+                raise Exception("Format incorrect")
     return g
 
 
@@ -308,7 +330,6 @@ def build_oriented_tree(tree, root=1):
         visited = {root}
         while queue:
             parent = queue.popleft()
-            print(parent)
             for child in tree.graph[parent]:
                 if child[0] not in visited:
                     visited.add(child[0])
@@ -343,19 +364,19 @@ un couple contenant la puissance minimal et le chemin de src à dest
 
 
 
-def get_path(src, dest, tree):
+def min_power_tree(src, dest, tree):
     src_ancestors = []
     curr = src
     while curr != 1:
         src_ancestors.append([curr, tree[curr][0][1]])
         curr = tree[curr][0][0]
-    src_ancestors.append((1, -1))
+    src_ancestors.append([1, 0])
     dest_ancestors = []
     curr = dest
     while curr != 1:
         dest_ancestors.append([curr, tree[curr][0][1]])
         curr = tree[curr][0][0]
-    dest_ancestors.append([1, -1])
+    dest_ancestors.append([1, 0])
 
     # Trouver l'indice du premier ancêtre commun entre src et dest
     i = len(src_ancestors) - 1
@@ -366,7 +387,7 @@ def get_path(src, dest, tree):
 
     # Concaténer les chemins de src et dest jusqu'à l'ancêtre commun
     path = src_ancestors[:i+2]
-    path[i+1][1] = -1
+    path[i+1][1] = 0
     path.extend(reversed(dest_ancestors[:j+1]))
 
     return max([x[1] for x in path]), [x[0] for x in path]
