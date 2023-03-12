@@ -110,7 +110,6 @@ class Graph:
         distance[src] = 0
         to_visit = [(src, 0)]
         while to_visit:
-            print(to_visit)
             node, dist_node = to_visit.pop()
             if not visited[node]:
                 visited[node] = True 
@@ -186,14 +185,12 @@ def graph_from_file_bis(filename):
                 node1, node2, power_min = int(edge[0]),int(edge[1]),int(edge[2])
                 g.add_edge(node1, node2, power_min) # will add dist=1 by default
                 g.edges.append((node1, node2, power_min,1))
-                if power_min not in g.power:
-                    g.power.append(power_min)
+                g.power.append(power_min)
             elif len(edge) == 4:
                 node1, node2, power_min, dist = int(edge[0]),int(edge[1]),int(edge[2]),float(edge[3]) #Pour pouvoir lire 10
                 g.add_edge(node1, node2, power_min, dist)
                 g.edges.append((node1, node2, power_min,dist))
-                if power_min not in g.power:
-                    g.power.append(power_min)
+                g.power.append(power_min)
             else:
                 raise Exception("Format incorrect")
     return g
