@@ -131,12 +131,8 @@ class Graph:
 # Q 6 min power par dichotomie
 
     def min_power(self, src, dest):
-        c = []
-        for i in self.connected_components():
-            if src or dest in i:
-                c = i
-                break
-        if src in c and dest in c : 
+        if self.get_path_with_power(src, dest, float('inf')) != None:
+            print(1)
             p = self.power
             p.sort()
             a = 0
@@ -168,12 +164,16 @@ def graph_from_file(filename):
             g.edges.append((node1, node2, power, 1))
             if power not in g.power:
                 g.power.append(power)
-        else:
-            node1, node2, power, dist = map(int, lines[i].split())
+
+        elif len(lines[i].split()) == 4:
+            edge = lines[i].split()
+            node1, node2, power, dist = int(edge[0]), int(edge[1]), int(edge[2]), float(edge[3])
             g.add_edge(node1, node2, power, dist)
             g.edges.append((node1, node2, power, dist))
             if power not in g.power:
                 g.power.append(power)
+        else:
+            raise Exception('Format incorrect')
     return g
 
 
@@ -206,18 +206,32 @@ def time_min_power(network):
 
     t_start  = perf_counter()
 
-    for i in range(1, 10):
+    for i in range(1, 6):
         src, dest, _ = map(int, lines[i].split())
         g.min_power(src, dest)
 
     t_stop = perf_counter()
     
-    return (t_stop - t_start)*nb_trajet/10
+    return (t_stop - t_start)*nb_trajet/5
 
 
 
 #Question 3
 
+"""""                                       Class UnionFind
+Attributs : 
+-----------
+parent : liste
+rank : liste 
+
+Methodes : 
+----------
+
+get_parent(): obtenir le parent d'un noeud qui est un représentant d'un groupe de noeuds
+Union(): permet de réunir deux groupes de noeuds
+
+
+"""
 
 class UnionFind:
     def __init__(self, n):
@@ -266,40 +280,68 @@ def kruskal(g):
 
 # 4
 
-def get_path_mst(mst,src,dest):
-        queue = deque([(src, [(src, -1)])])
-        visited = set([src])
-        while queue:
-            node, path = queue.popleft()
-            if node == dest:
-                l = path
-            for neighbor in mst.graph[node]:
-                if neighbor[0] not in visited :
-                    visited.add(neighbor[0])
-                    queue.append((neighbor[0], path + [(neighbor[0], neighbor[1])]))
-        list_power = [l[i][1] for i in range(len(l))]
-        powermin = max(list_power)
-        min_path = [l[i][0] for i in range(len(l))]
 
-        return min_path, powermin
+#Question 14
+
+"""""
+Déscription: 
+-----------
+La fonction prend un arbre orienté et le transforme en un arbre orienté des enfants vers le parents 
+
+Input: tree
+------
+tree : Arbre non orienté, instance de la Class Graph
+root : racine voulu pour l'arbre, root = 1 par défaut
 
 
+output:
+-------
+Arbre orienté des enfants vers le parent
 
 
+"""
 
-def build_oriented_tree(tree, root):
+def build_oriented_tree(tree, root=1):
         # Construire un arbre orienté des enfants vers les parents
         oriented_tree = {root: []}
         queue = deque([root])
         visited = {root}
         while queue:
             parent = queue.popleft()
+            print(parent)
             for child in tree.graph[parent]:
                 if child[0] not in visited:
                     visited.add(child[0])
                     oriented_tree[child[0]] = [(parent,child[1],child[2])]
                     queue.append(child[0])
         return oriented_tree
+
+
+"""""                           fonction : get_path
+Déscription:
+-----------
+trouve le chemin entre deux villes dans un arbre en remontant les ancêtres pour touver 
+l'ancêtre minimum
+
+Input:
+------
+src : ville de départ
+type : int
+
+dest : ville d'arrivé
+type : int
+
+tree : arbre 
+
+output : 
+-------
+
+un couple contenant la puissance minimal et le chemin de src à dest
+
+
+"""
+
+
 
 def get_path(src, dest, tree):
     src_ancestors = []
