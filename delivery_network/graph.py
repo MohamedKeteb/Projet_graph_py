@@ -287,13 +287,44 @@ def get_path_mst(mst,src,dest):
 
 
 
+def build_oriented_tree(tree, root):
+        # Construire un arbre orienté des enfants vers les parents
+        oriented_tree = {root: []}
+        queue = deque([root])
+        visited = {root}
+        while queue:
+            parent = queue.popleft()
+            for child in tree.graph[parent]:
+                if child[0] not in visited:
+                    visited.add(child[0])
+                    oriented_tree[child[0]] = [(parent,child[1],child[2])]
+                    queue.append(child[0])
+        return oriented_tree
 
+def get_path(src, dest, tree):
+    src_ancestors = []
+    curr = src
+    while curr != 1:
+        src_ancestors.append([curr, tree[curr][0][1]])
+        curr = tree[curr][0][0]
+    src_ancestors.append((1, -1))
+    dest_ancestors = []
+    curr = dest
+    while curr != 1:
+        dest_ancestors.append([curr, tree[curr][0][1]])
+        curr = tree[curr][0][0]
+    dest_ancestors.append([1, -1])
 
+    # Trouver l'indice du premier ancêtre commun entre src et dest
+    i = len(src_ancestors) - 1
+    j = len(dest_ancestors) - 1
+    while i >= 0 and j >= 0 and src_ancestors[i][0] == dest_ancestors[j][0]:
+        i -= 1
+        j -= 1
 
+    # Concaténer les chemins de src et dest jusqu'à l'ancêtre commun
+    path = src_ancestors[:i+2]
+    path[i+1][1] = -1
+    path.extend(reversed(dest_ancestors[:j+1]))
 
-
-
-
-
-
-
+    return max([x[1] for x in path]), [x[0] for x in path]
