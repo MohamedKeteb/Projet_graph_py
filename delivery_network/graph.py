@@ -1,4 +1,4 @@
-#"Projet Prog"
+
 from collections import deque
 from time import perf_counter
 import math
