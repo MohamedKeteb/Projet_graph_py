@@ -27,17 +27,48 @@ class Graph:
         return output
 
 
-# -- 
+    """""
+    Description : 
+    -----------
+    Ajoute une arrête sous forme de tuple dans un graph.
+
+    input:
+    ------
+    node1, node2 : noeuds du graph, type : int
+    power : puissance minimale pour passer l'arrête, type : int ou float(network.10.in)
+    dist : longeur de l'arrête qui est par défaut égale à 1 si elle n'est pas renseigné, type : int 
+
+    output:
+    ------
+    La fonction ne retourne rien
+    """
+
+
     def add_edge(self, node1, node2, power, dist=1):
             
-
+        # Le graph est non orienté 
         self.graph[node1].append((node2, power, dist))
         self.graph[node2].append((node1, power, dist))
         self.nb_edges += 1
          
- 
+    """   Méthode connected_components()
+    Description:
+    -----------
+    la fonction trouve les composantes connexes d'un graph
 
-    
+    input:
+    -----
+    une instance de Graph
+
+    output:
+    -------
+
+    une liste contenant les composantes connexes
+
+    """  
+
+
+
  # Question 2
 
     def connected_components(self):
@@ -60,12 +91,47 @@ class Graph:
                 component = bfs(node, visited)
                 components.append(component)
         return components
-    
+   
 # fin Q2
+
+    """"" Méthode connected_components_set()
+    Description:
+    -----------
+    permet d'nlever les éventuels doublons
+
+    input:
+    ------
+    Une instance de Graph
+
+    output:
+    ------
+    un set contenant des frozenset (qui est un set immutable) représentant les composantes connexes
+
+    """
 
     def connected_components_set(self):
         return set(map(frozenset, self.connected_components()))
     
+    """""   Méthode get_path_with_power()
+    Description : 
+    -----------
+    Donne un chemin entre deux neouds si c'est possible pour un camion de puissance power
+
+    input:
+    -----
+    src : noeud de départ
+    dest : noeud d'arrivé
+    power : la puissance du camion
+
+    output:
+    -------
+    si y a un chemin output = liste du chemin
+    sinon None
+
+
+    """
+
+
 
 # Question 3
     
@@ -86,8 +152,9 @@ class Graph:
 
 # Fin question3
 
-#Question 4 avec Q1
+    """""
 
+    """
 
 
 
@@ -125,6 +192,24 @@ class Graph:
             return None
         else :     
             return chem(dest), distance[dest]
+    
+    """"" Méthode : min_power()
+    Description:
+    ------------
+    Donne le chemin avec la puissance minimale si c'est possible 
+
+    input:
+    -----
+    src: noeud de départ
+    dest: noeud d'arrivé
+
+    output:
+    ------
+    si pas de chemin : soulever une erreur 
+    sinon return une couple contant le chemin sous forme de liste et la puissance minimale
+
+
+    """
         
 
 # Q 6 min power par dichotomie
@@ -148,8 +233,25 @@ class Graph:
     
 # Fin Q6
 
+    
+
 # Question 1 et 4
 
+
+    """""   Fonction : graph_from_file()
+    Description:
+    ------------
+    crée un graph à partir d'un fichier network
+
+    input:
+    -----
+    filename : Chemin du fichier contenant le graph
+
+    output:
+    -------
+    une instance de la classe Graph
+
+    """
 
 def graph_from_file(filename):
     with open(filename, "r") as file:
@@ -188,6 +290,10 @@ def graph_from_file(filename):
 
 #Séance 2 
 
+"""""
+
+"""
+
 
 #Question 1 
 
@@ -216,7 +322,7 @@ def time_min_power(network):
 
 #Question 3
 
-"""""                                       Class UnionFind
+"""""   Class UnionFind
 Attributs : 
 -----------
 parent : liste
@@ -252,6 +358,9 @@ class UnionFind:
                     self.rank[root_y] += 1
 
 #Fin Q3
+"""""
+
+"""
 
 def kruskal(g):
     if len(g.connected_components_set()) == 1:
@@ -276,7 +385,7 @@ def kruskal(g):
         raise ValueError('g non connexe')
 
 
-# 4
+
 
 
 #Question 14
@@ -367,6 +476,10 @@ def min_power_tree(src, dest, tree):
     path.extend(reversed(dest_ancestors[:j+1]))
 
     return max([x[1] for x in path]), [x[0] for x in path]
+
+"""""
+
+"""
 
 def time_min_power_tree(network, tree):
     x = network.split('.')[1]
