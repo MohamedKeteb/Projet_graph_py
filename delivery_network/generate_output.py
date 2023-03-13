@@ -5,7 +5,7 @@ import sys
 from time import perf_counter
 sys.setrecursionlimit(500000)
 
-from graph import graph_from_file, kruskal, min_power_tree, build_oriented_tree
+from graph import graph_from_file, kruskal, min_power_tree, build_oriented_tree, time_min_power_tree, time_min_power
 path = r"C:\Users\keteb\OneDrive\Bureau\ensae-prog23\input/"
 
 class oriented_tree:
@@ -36,10 +36,6 @@ tree9 = oriented_tree(filename9).tree
 tree10 = oriented_tree(filename10).tree
 
 
-
-
-
-
 # %%
 
 path_in = r"C:\Users\keteb\OneDrive\Bureau\ensae-prog23\input/"
@@ -57,7 +53,7 @@ def generate_routes_out(tree,x):
             f.write(src+" "+dest+" "+utility+" "+p+"\n") 
     f.close()
 
-#generate_routes_out(tree1, 1)
+generate_routes_out(tree1, 1)
 generate_routes_out(tree2, 2)
 generate_routes_out(tree3, 3)
 generate_routes_out(tree4, 4)
@@ -67,6 +63,55 @@ generate_routes_out(tree7, 7)
 generate_routes_out(tree8, 8)
 generate_routes_out(tree9, 9)
 generate_routes_out(tree10, 10)
+
+
+
+
+
+
+
+
+# %%
+file = r"C:\Users\keteb\OneDrive\Bureau\ensae-prog23\delivery_network\temps.min_power_tree"
+
+f = open(file, 'w')
+f.write("temps de calcul : min_power_tree Q14\n")
+
+t = time_min_power_tree(path_in+filename1, tree1)
+f.write('routes1 : '+str(t)+'sec = '+str(t/60)+'min\n')
+
+t = time_min_power_tree(path_in+filename2, tree2)
+f.write('routes2 : '+str(t)+'sec = '+str(t/60)+'min\n')
+
+t = time_min_power_tree(path_in+filename3, tree3)
+f.write('routes3 : '+str(t)+'sec = '+str(t/60)+'min\n')
+
+t = time_min_power_tree(path_in+filename4, tree4)
+f.write('routes4 : '+str(t)+'sec = '+str(t/60)+'min\n')
+
+t = time_min_power_tree(path_in+filename5, tree5)
+f.write('routes5 : '+str(t)+'sec = '+str(t/60)+'min\n')
+
+t = time_min_power_tree(path_in+filename6, tree6)
+f.write('routes6 : '+str(t)+'sec = '+str(t/60)+'min\n')
+
+t = time_min_power_tree(path_in+filename7, tree7)
+f.write('routes7 : '+str(t)+'sec = '+str(t/60)+'min\n')
+
+t = time_min_power_tree(path_in+filename8, tree8)
+f.write('routes8 : '+str(t)+'sec = '+str(t/60)+'min\n')
+
+t = time_min_power_tree(path_in+filename9, tree9)
+f.write('routes9 : '+str(t)+'sec = '+str(t/60)+'min\n')
+
+t = time_min_power_tree(path_in+filename10, tree10)
+f.write('routes10 : '+str(t)+'sec = '+str(t/60)+'min\n')
+
+f.close()
+
+
+
+
 
 
 
