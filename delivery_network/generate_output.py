@@ -58,7 +58,7 @@ def generate_routes_out(tree,x):
     f.close()
 
 #generate_routes_out(tree1, 1)
-#generate_routes_out(tree2, 2)
+generate_routes_out(tree2, 2)
 generate_routes_out(tree3, 3)
 generate_routes_out(tree4, 4)
 generate_routes_out(tree5, 5)

@@ -149,33 +149,9 @@ class Graph:
 # Fin Q6
 
 # Question 1 et 4
+
+
 def graph_from_file(filename):
-    f = open(filename, 'r')
-    lines = f.readlines()
-    nb_nodes, _ = map(int, lines[0].split())
-    g = Graph([i for i in range(1, nb_nodes + 1)])
-    for i in range(1, len(lines)):
-        if len(lines[i].split()) == 3:
-            node1, node2, power = map(int, lines[i].split())
-
-            g.add_edge(node1, node2, power)
-            g.edges.append((node1, node2, power, 1))
-            if power not in g.power:
-                g.power.append(power)
-
-        elif len(lines[i].split()) == 4:
-            edge = lines[i].split()
-            node1, node2, power, dist = int(edge[0]), int(edge[1]), int(edge[2]), float(edge[3])
-            g.add_edge(node1, node2, power, dist)
-            g.edges.append((node1, node2, power, dist))
-            if power not in g.power:
-                g.power.append(power)
-        else:
-            raise Exception('Format incorrect')
-    return g
-
-
-def graph_from_file_bis(filename):
     with open(filename, "r") as file:
         n, m = map(int, file.readline().split())
         g = Graph(range(1, n+1))
@@ -194,6 +170,8 @@ def graph_from_file_bis(filename):
             else:
                 raise Exception("Format incorrect")
     return g
+
+
 
 
 
