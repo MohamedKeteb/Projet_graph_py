@@ -208,6 +208,7 @@ def time_min_power(network):
         g.min_power(src, dest)
 
     t_stop = perf_counter()
+    return (t_stop-t_start)*nb_trajet/5
 
 
 
