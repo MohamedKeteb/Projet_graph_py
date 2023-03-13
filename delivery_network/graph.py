@@ -192,11 +192,11 @@ def graph_from_file(filename):
 #Question 1 
 
 def time_min_power(network):
-    filename = "input/"+ network
+    filename = r"C:\Users\keteb\OneDrive\Bureau\ensae-prog23\input/"+ network
     g = graph_from_file(filename)
     x = network.split('.')[1]
 
-    f = open("input/"+ 'routes.' + str(x) + '.in', 'r')
+    f = open(r"C:\Users\keteb\OneDrive\Bureau\ensae-prog23\input/"+ 'routes.' + str(x) + '.in', 'r')
     lines = f.readlines()
 
     nb_trajet = len(lines)
@@ -204,12 +204,12 @@ def time_min_power(network):
     t_start  = perf_counter()
 
     for i in range(1, 6):
-        src, dest, _ = map(int, lines[i].split())
+        src, dest, _ = map(float, lines[i].split())
         g.min_power(src, dest)
 
     t_stop = perf_counter()
-    
-    return (t_stop - t_start)*nb_trajet/5
+
+
 
 
 
@@ -366,3 +366,21 @@ def min_power_tree(src, dest, tree):
     path.extend(reversed(dest_ancestors[:j+1]))
 
     return max([x[1] for x in path]), [x[0] for x in path]
+
+def time_min_power_tree(network, tree):
+    x = network.split('.')[1]
+
+    f = open(r"C:\Users\keteb\OneDrive\Bureau\ensae-prog23\input/"+ 'routes.' + str(x) + '.in', 'r')
+    lines = f.readlines()
+
+    nb_trajet = len(lines)
+
+    t_start  = perf_counter()
+
+    for i in range(1, nb_trajet):
+        src, dest, _ = map(float, lines[i].split())
+        min_power_tree(src, dest, tree)
+
+    t_stop = perf_counter()
+    
+    return (t_stop - t_start)
