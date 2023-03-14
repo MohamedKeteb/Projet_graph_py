@@ -50,6 +50,7 @@ class Graph:
         self.graph[node1].append((node2, power, dist))
         self.graph[node2].append((node1, power, dist))
         self.nb_edges += 1
+
          
     """   Méthode connected_components()
     Description:
@@ -64,19 +65,18 @@ class Graph:
     -------
 
     une liste contenant les composantes connexes
-
     """  
 
 
 
- # Question 2
+ # -----------------------------------------------Question 2
 
     def connected_components(self):
         def bfs(start_node, visited):
             component = []
             queue = deque([start_node])
             visited[start_node] = True
-            while queue:
+            while queue:                # tant que la queue n'est pas vide on continue
                 node = queue.popleft()
                 component.append(node)
                 for neighbor in self.graph[node]:
@@ -92,7 +92,7 @@ class Graph:
                 components.append(component)
         return components
    
-# fin Q2
+# ----------------------------------------------------fin Q2
 
     """"" Méthode connected_components_set()
     Description:
@@ -127,13 +127,11 @@ class Graph:
     -------
     si y a un chemin output = liste du chemin
     sinon None
-
-
     """
 
 
 
-# Question 3
+# -------------------------------------------------Question 3
     
 
 
@@ -150,15 +148,27 @@ class Graph:
                     queue.append((neighbor[0], path + [neighbor[0]]))
         return None
 
-# Fin question3
+# -------------------------------------------------Fin question3
 
-    """""
+    """"" Méthode get_path_min_dist()
+    Description :
+    ------------
+    La fonction retourne pour les chemins admissible avec la puissance power, le chemin de distance minimale
+    input:
+    -----
+    src: noeud de départ 
+    dest: noeud d'arrivé 
+    power: puissance du camion
 
+    output:
+    ------
+    si src et dest ne sont pas dans la même composante connexe output = None
+    sinon return un couple contenant le chemin et la puissance.
     """
 
 
 
-# Question 5 avec Dijkstra
+# --------------------------------------Question 5 avec Dijkstra:
 
     def get_path_min_dist(self, src, dest, power):
         
@@ -182,7 +192,7 @@ class Graph:
                 visited[node] = True 
                 for v in self.graph[node] :
                     dist_v = dist_node + v[2]
-                    if dist_v < distance[v[0]] and power >= v[1]:
+                    if dist_v < distance[v[0]] and power >= v[1]: # Dans l'alogrithme de Dijkstra il faut mettre la condition sur la puissance 
                         distance[v[0]] = dist_v
                         precedent[v[0]] = node
                         to_visit.append((v[0], dist_v))
@@ -210,18 +220,19 @@ class Graph:
 
 
     """
+# ----------------------------------------------Fin Q5
         
 
-# Q 6 min power par dichotomie
+# ----------------------------------------Q6 :
 
     def min_power(self, src, dest):
-        if self.get_path_with_power(src, dest, float('inf')) != None:
+        if self.get_path_with_power(src, dest, float('inf')) != None: # on vérifie qu'un chemin existe.
             p = self.power
-            p.sort()
+            p.sort() # on trie les puissance pour faire une dichotomie 
             a = 0
             b = len(p)-1
             m = (a+b)//2
-            while a < b :
+            while a < b : 
                 if self.get_path_with_power(src,dest,p[m]) != None:
                     b=m
                 else:
@@ -231,11 +242,11 @@ class Graph:
         else:
             raise ValueError('Trajet impossible')
     
-# Fin Q6
+# -----------------------------------------------------Fin Q6
 
     
 
-# Question 1 et 4
+# --------------------------------------------------Question 1 et 4
 
 
     """""   Fonction : graph_from_file()
@@ -259,7 +270,7 @@ def graph_from_file(filename):
         g = Graph(range(1, n+1))
         for _ in range(m):
             edge = file.readline().split()
-            if len(edge) == 3:
+            if len(edge) == 3: # on distingue les cas ou la puissance n'est pas renseignée
                 node1, node2, power_min = int(edge[0]),int(edge[1]),int(edge[2])
                 g.add_edge(node1, node2, power_min) # will add dist=1 by default
                 g.edges.append((node1, node2, power_min,1))
@@ -276,10 +287,10 @@ def graph_from_file(filename):
 
 
 
-
+# ----------------------------------------------FIN q1 et Q4
 
     
-# Question8 dans le ficier test_s1q8
+# Question8 ---> Dans le ficier test_s1q8
 
 
 
@@ -288,14 +299,30 @@ def graph_from_file(filename):
 
 
 
-#Séance 2 
+#---------------------------------------------------Séance 2 
 
-"""""
+"""""   Fonction : time_min_power
+Description:
+------------
+A partir d'un fichier représentant un graph on donne un estimation du temps qu'il faudrait pour calculer 
+les trajets du fichier route associé.
+
+input:
+-----
+network: le fichier contenant le graph
+
+output:
+-------
+un temps 
+
+
+
 
 """
 
 
-#Question 1 
+#-----------------------------------------------Question 10 
+# Voir le fichier texte temps.min.power
 
 def time_min_power(network):
     filename = r"C:\Users\keteb\OneDrive\Bureau\ensae-prog23\input/"+ network
@@ -309,18 +336,18 @@ def time_min_power(network):
 
     t_start  = perf_counter()
 
-    for i in range(1, 6):
+    for i in range(1, 6): # on prend 5 trajets 
         src, dest, _ = map(float, lines[i].split())
         g.min_power(src, dest)
 
     t_stop = perf_counter()
     return (t_stop-t_start)*nb_trajet/5
 
+#-------------------------------------------------Fin Q11
 
 
 
-
-#Question 3
+#----------------------------------------------Question 13
 
 """""   Class UnionFind
 Attributs : 
@@ -333,8 +360,6 @@ Methodes :
 
 get_parent(): obtenir le parent d'un noeud qui est un représentant d'un groupe de noeuds
 Union(): permet de réunir deux groupes de noeuds
-
-
 """
 
 class UnionFind:
@@ -342,12 +367,12 @@ class UnionFind:
         self.parent = list(range(n))
         self.rank = [0] * n
         
-    def get_parent(self, x):
+    def get_parent(self, x):    # Retrouver le représentant de
         if self.parent[x] != x:
             self.parent[x] = self.get_parent(self.parent[x])
         return self.parent[x]
         
-    def Union(self, x, y):
+    def Union(self, x, y): 
         root_x, root_y = self.get_parent(x), self.get_parent(y)
         if root_x != root_y:
             if self.rank[root_x] > self.rank[root_y]:
@@ -357,8 +382,17 @@ class UnionFind:
                 if self.rank[root_x] == self.rank[root_y]:
                     self.rank[root_y] += 1
 
-#Fin Q3
-"""""
+"""""   Fonction : kruskal
+Description:
+-----------
+Permet d'envoyer un objet de la Class Graph qui est un arbre couvrant de poids minimal.
+input:
+------
+g : une instance de la classe graph
+
+output:
+-------
+une instance de la classe graph
 
 """
 
@@ -384,14 +418,15 @@ def kruskal(g):
     else:
         raise ValueError('g non connexe')
 
+#---------------------------------------------Fin Q13
 
 
 
 
-#Question 14
+#--------------------------------------------Question 14
 
-"""""
-Déscription: 
+"""""   Fonction : build_oriented_tree
+Description: 
 -----------
 La fonction prend un arbre orienté et le transforme en un arbre orienté des enfants vers le parents 
 
@@ -404,8 +439,6 @@ root : racine voulu pour l'arbre, root = 1 par défaut
 output:
 -------
 Arbre orienté des enfants vers le parent
-
-
 """
 
 def build_oriented_tree(tree, root=1):
@@ -423,18 +456,18 @@ def build_oriented_tree(tree, root=1):
         return oriented_tree
 
 
-"""""                           fonction : get_path
-Déscription:
+"""""   Fonction : get_path
+Description:
 -----------
-trouve le chemin entre deux villes dans un arbre en remontant les ancêtres pour touver 
+trouve le chemin entre deux noeuds dans un arbre en remontant les ancêtres pour touver 
 l'ancêtre minimum
 
 Input:
 ------
-src : ville de départ
+src : noeud de départ
 type : int
 
-dest : ville d'arrivé
+dest : noeud d'arrivé
 type : int
 
 tree : arbre 
@@ -443,12 +476,7 @@ output :
 -------
 
 un couple contenant la puissance minimal et le chemin de src à dest
-
-
 """
-
-
-
 def min_power_tree(src, dest, tree):
     src_ancestors = []
     curr = src
@@ -477,9 +505,25 @@ def min_power_tree(src, dest, tree):
 
     return max([x[1] for x in path]), [x[0] for x in path]
 
-"""""
+"""""   Fonction : time_min_power_tree
+Description :
+------------
+A partir d'un graph et d'un arbre couvrant, la fonction retourne le temps de calcul 
+de min_power_tree() sur les fichiers routes
+input:
+-----
+network: le nom du graph ex: network.1.in
+tree: l'arbre couvrant minimal
+
+output:
+------
+un temps 
 
 """
+
+#-------------------------------------------------QuestionQ15
+
+
 
 def time_min_power_tree(network, tree):
     x = network.split('.')[1]
@@ -488,7 +532,6 @@ def time_min_power_tree(network, tree):
     lines = f.readlines()
 
     nb_trajet = len(lines)
-
     t_start  = perf_counter()
 
     for i in range(1, nb_trajet):
