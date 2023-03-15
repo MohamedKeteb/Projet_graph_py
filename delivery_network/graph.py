@@ -31,13 +31,13 @@ class Graph:
     """""
     Description : 
     -----------
-    Ajoute une arrête sous forme de tuple dans un graph.
+    Ajoute une arête sous forme de tuple dans un graph.
 
     input:
     ------
     node1, node2 : noeuds du graph, type : int
-    power : puissance minimale pour passer l'arrête, type : int ou float(network.10.in)
-    dist : longeur de l'arrête qui est par défaut égale à 1 si elle n'est pas renseigné, type : int 
+    power : puissance minimale pour passer l'arête, type : int ou float(network.10.in)
+    dist : longueur de l'arête qui est par défaut égale à 1 si elle n'est pas renseigné, type : int 
 
     output:
     ------
@@ -66,6 +66,8 @@ class Graph:
     -------
 
     une liste contenant les composantes connexes
+        Retourne les composantes connexes du graphe en faisant un parcour en largeure
+
     """  
 
 
@@ -77,7 +79,7 @@ class Graph:
             component = []
             queue = deque([start_node])
             visited[start_node] = True
-            while queue:                # tant que la queue n'est pas vide on continue
+            while queue:                # la file d’attente contient au moins un noeud, on reste dans la boucle
                 node = queue.popleft()
                 component.append(node)
                 for neighbor in self.graph[node]:
@@ -116,17 +118,18 @@ class Graph:
     """""   Méthode get_path_with_power()
     Description : 
     -----------
-    Donne un chemin entre deux neouds si c'est possible pour un camion de puissance power
+    Pour une puissance de camion donnée, renvoie un chemin possible entre deux nœuds, s'il en existe un, None sinon.
 
     input:
     -----
     src : noeud de départ
-    dest : noeud d'arrivé
+    dest : noeud d'arrivée
     power : la puissance du camion
 
     output:
     -------
-    si y a un chemin output = liste du chemin
+    si y a un chemin output = Une liste de noeud (chemin) s'il en existe un. None sinon
+
     sinon None
     """
 
@@ -140,7 +143,7 @@ class Graph:
         queue = deque([(src, [src])])
         visited = set([src])
         while queue:
-            node, path = queue.popleft()
+            node, path = queue.popleft()#On envoie le premier tuple de la liste d’attente
             if node == dest:
                 return path
             for neighbor in self.graph[node]:
@@ -154,17 +157,18 @@ class Graph:
     """"" Méthode get_path_min_dist()
     Description :
     ------------
-    La fonction retourne pour les chemins admissible avec la puissance power, le chemin de distance minimale
+    La fonction retourne pour les chemins possibles avec la puissance power, le chemin de distance minimale
+    en utilisant l'algorithme de Dijkstra
     input:
     -----
     src: noeud de départ 
-    dest: noeud d'arrivé 
+    dest: noeud d'arrivée    
     power: puissance du camion
 
     output:
     ------
-    si src et dest ne sont pas dans la même composante connexe output = None
-    sinon return un couple contenant le chemin et la puissance.
+    Si le noeud de départ et d'arrivée ne sont pas des composantes connexe, la fonction renvoie None
+    sinon sinon la méthode renvoie un couple contenant le chemin et la puissance.
     """
 
 
@@ -207,19 +211,17 @@ class Graph:
     """"" Méthode : min_power()
     Description:
     ------------
-    Donne le chemin avec la puissance minimale si c'est possible 
-
+    Renvoie le chemin ainsi que la avec la puissance minimale nécessaire pour aller d’un nœud de départ à un nœud d’arrivée,
+    s’il en existe un, en utilisant une recherche binomiale (i.e un parcours dichotomique. La fonction renvoie une erreur sinonsi c'est possible 
+    La méthode min_power réalise une dichotomie sur la liste des puissances répertoriées entre deux nœuds. 
     input:
     -----
     src: noeud de départ
-    dest: noeud d'arrivé
-
+    dest: noeud d'arrivée
     output:
     ------
     si pas de chemin : soulever une erreur 
-    sinon return une couple contant le chemin sous forme de liste et la puissance minimale
-
-
+    sinon return une couple contenant contant le chemin sous forme de liste et la puissance minimale sous la forme d’un str.
     """
 # ----------------------------------------------Fin Q5
         
@@ -317,8 +319,6 @@ output:
 un temps 
 
 
-
-
 """
 
 
@@ -365,15 +365,15 @@ Union(): permet de réunir deux groupes de noeuds
 
 class UnionFind:
     def __init__(self, n):
-        self.parent = list(range(n))
+        self.parent = list(range(n)) # on initialise une liste où chaque noeud est son prpre parent
         self.rank = [0] * n
         
-    def get_parent(self, x):    # Retrouver le représentant de
+    def get_parent(self, x):    # Retrouver le représentant de x pendant la construction de l'arbre couvrant 
         if self.parent[x] != x:
             self.parent[x] = self.get_parent(self.parent[x])
         return self.parent[x]
         
-    def Union(self, x, y): 
+    def Union(self, x, y):  # réunir deux groupes en réunissant le représentant de x et de y.
         root_x, root_y = self.get_parent(x), self.get_parent(y)
         if root_x != root_y:
             if self.rank[root_x] > self.rank[root_y]:
@@ -407,7 +407,8 @@ def kruskal(g):
         while g_mst.nb_edges != g.nb_nodes - 1:
             src, dest, power, dist= edges[i]
 
-            x = ed.get_parent(src - 1)
+            x = ed.get_parent(src - 1) # les noeuds sont numérotés de 1 à n on fait -1 pour pouvoir applique 
+            # union find qui est implémenté pour les graphs numérotés à partir de 0
             y = ed.get_parent(dest - 1)
 
             if x != y:  # si les représentants sont diffétents on raccroche les deux composantes de x et y 
@@ -439,7 +440,7 @@ root : racine voulu pour l'arbre, root = 1 par défaut
 
 output:
 -------
-Arbre orienté des enfants vers le parent
+Arbre orienté des enfants vers les parents
 """
 
 def build_oriented_tree(tree, root=1):
@@ -468,10 +469,10 @@ Input:
 src : noeud de départ
 type : int
 
-dest : noeud d'arrivé
+dest : noeud d'arrivée
 type : int
 
-tree : arbre 
+tree : arbre orienté des enfants vers le parents
 
 output : 
 -------
@@ -547,7 +548,7 @@ def time_min_power_tree(network, tree):
 #-----------------------------------Q16
 
 
-""""" Fonction: Preprocess
+""""" Fonction: process
 Description:
 ------------
 on crée un dictionnaire avec tous les ancêtres à une distance d'une puissance de 2
@@ -563,20 +564,20 @@ up: dictionnaire
 
 """
 
-    
-def prepocess_with_power(tree): # tree orienté des enfants vers les parents
-    n = len(tree.keys())
-    up = {i : [(-1, 0) for j in range(int(math.log2(n)) + 1)] for i in range(1, n+1)}
-    tree[1] = [(-1, 0, 0)]
-    for i in range(1, n+1):
-        up[i][0] = (tree[i][0][0], tree[i][0][1])
-        for j in range(1, int(math.log2(n)) + 1):
-            for i in range(1, n+1):
-                if up[i][j-1][0] != -1  and up[ up[i][j-1][0] ][j-1][0] != -1: # ces deux conditions permettent de ne pas sortir de l'arbre dans le premier et le deuxième saut
-                    up[i][j] = (up[ up[i][j-1][0] ][j-1][0], max(up[i][j-1][1], up[ up[i][j-1][0] ][j-1][1]))
-    return up          # une relation de récurrence montre que pour atteindre l'ancêtre 
-                        # à 2^j on prend le 2^j-1 ancêtre du 2^j-1 ème.
+def process(tree):
+# tree orienté des enfants vers les parents
+    N=len(tree)
+    up={k: [(-1,0) for i in range(int(math.log2(N))+1)] for k in tree.keys()} 
+    for v in tree.keys():
+        up[v][0]=(tree[v][0][0],tree[v][0][1])
+    for j in range(1,int(math.log2(N))+1):
+        for v in tree.keys():
+            if up[v][j-1][0]!=-1 and up[up[v][j-1][0]][j-1][0]!=-1:
+                up[v][j]=up[up[v][j-1][0]][j-1][0],max(up[v][j-1][1],up[up[v][j-1][0]][j-1][1])  # ces deux conditions permettent de ne pas sortir de l'arbre dans le premier et le deuxième saut
+    return up # une relation de récurrence montre que pour atteindre l'ancêtre 
+                        # à 2^j on prend le 2^j-1 ancêtre du 2^j-1 ème ancêtre.
 
+    
 """""   Fonction level
 Description recherche de la profondeur de chaque noeuds en utilisant un BFS.
 input: 
@@ -607,9 +608,10 @@ aux ancêtres avec des puissance de 2 donc plus rapidement.
 
 input:
 -------
-tree: arbre donné par kruskal
+lv: dictionnaire des profondeurs
+up: dictionnaire du préprocessing
 a: noeud de départ 
-b: noued d'arrivé 
+b: noued d'arrivée
 
 output:
 -------
@@ -617,7 +619,7 @@ puissance minimal pour relier a et b.
 
 """
 
-def min_power_lca(a, b, up, lv): # tree arbre non orienté 
+def min_power_lca(a, b, up, lv): 
     p = [0]
     n = len(lv)
     if lv[a] < lv[b]:
@@ -644,12 +646,13 @@ def min_power_lca(a, b, up, lv): # tree arbre non orienté
 
 
 
-#----------------------------------Q17
+#----------------------------------Question17
+#cf fichier temps_S3q17 dans delivery_network.
 
 
 """""   Fonction time_find_lca()
 même fonction que que pour time_min_power_tree() mais cette fois pour la fonction 
-find_lca()
+min_power_lca()
 
 """
 
@@ -671,6 +674,4 @@ def time_min_power_lca(network, up, lv):
     
     return (t_stop - t_start)
         
-
-
 

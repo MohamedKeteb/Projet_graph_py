@@ -9,7 +9,7 @@ from time import perf_counter
 sys.setrecursionlimit(500000)
 
 from graph import Graph, graph_from_file, time_min_power, kruskal, build_oriented_tree, min_power_tree
-
+# construire le fichier temps.min.power
 file = r"C:\Users\keteb\OneDrive\Bureau\ensae-prog23\delivery_network\temps.min_power"
 f = open(file, 'w')
 f.write("temps de calcul : min_power Q6\n")
@@ -27,12 +27,14 @@ import sys
 from time import perf_counter
 
 sys.setrecursionlimit(500000)
-from graph import Graph, graph_from_file, time_min_power, kruskal, build_oriented_tree, min_power_tree, prepocess, level, find_lca, prepocess_with_power
+from graph import Graph, graph_from_file, time_min_power, kruskal, build_oriented_tree, min_power_tree, level, min_power_lca, process
 
-g = graph_from_file(r"C:\Users\keteb\OneDrive\Bureau\ensae-prog23\input\network.00.in")
+g = graph_from_file(r"C:\Users\keteb\OneDrive\Bureau\ensae-prog23\input\network.2.in")
 tree = kruskal(g)
-print(find_lca(tree, 4, 6))
-
+ot = build_oriented_tree(tree)
+print(1)
+print(level(tree))
+print(process(ot))
 
 
 # %%
