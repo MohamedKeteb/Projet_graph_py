@@ -410,7 +410,7 @@ def kruskal(g):
             x = ed.get_parent(src - 1)
             y = ed.get_parent(dest - 1)
 
-            if x != y:
+            if x != y:  # si les représentants sont diffétents on raccroche les deux composantes de x et y 
                 g_mst.add_edge(src, dest, power, dist)
                 ed.Union(x, y)
 
@@ -443,7 +443,7 @@ Arbre orienté des enfants vers le parent
 """
 
 def build_oriented_tree(tree, root=1):
-        # Construire un arbre orienté des enfants vers les parents
+        # Construire un arbre orienté des enfants vers les parents avec un BFS
         oriented_tree = {root: []}
         queue = deque([root])
         visited = {root}
@@ -481,13 +481,13 @@ un couple contenant la puissance minimal et le chemin de src à dest
 def min_power_tree(src, dest, tree):
     src_ancestors = []
     curr = src
-    while curr != 1:
+    while curr != 1: # on récupère les ancêtres de src
         src_ancestors.append([curr, tree[curr][0][1]])
         curr = tree[curr][0][0]
     src_ancestors.append([1, 0])
     dest_ancestors = []
     curr = dest
-    while curr != 1:
+    while curr != 1: # on récupère les ancêtres de dest
         dest_ancestors.append([curr, tree[curr][0][1]])
         curr = tree[curr][0][0]
     dest_ancestors.append([1, 0])
@@ -544,19 +544,27 @@ def time_min_power_tree(network, tree):
     return (t_stop - t_start)
 
 
-def prepocess(tree): # tree non orienté 
-    n = len(tree.keys())
-    up = {i : [-1 for j in range(int(math.log2(n)) + 1)] for i in range(1, n+1)}
-    tree[1] = [(-1, 0, 0)]
-    for i in range(1, n+1):
-        up[i][0] = tree[i][0][0]
-        for j in range(1, int(math.log2(n)) + 1):
-            for i in range(1, n+1):
-                if up[i][j-1] != -1:
-                    up[i][j] = up[ up[i][j-1] ][j-1]
-    return up
+#-----------------------------------Q16
+
+
+""""" Fonction: Preprocess
+Description:
+------------
+on crée un dictionnaire avec tous les ancêtres à une distance d'une puissance de 2
+et on répertorie les puissance minimlaes pour atteindres ces ancêstres
+
+input:
+------
+tree: arbre couvrant minimal donné par kruskal mais orienté des enfants vers les parents.
+
+output:
+-------
+up: dictionnaire
+
+"""
+
     
-def prepocess_with_power(tree): # tree non orienté 
+def prepocess_with_power(tree): # tree orienté des enfants vers les parents
     n = len(tree.keys())
     up = {i : [(-1, 0) for j in range(int(math.log2(n)) + 1)] for i in range(1, n+1)}
     tree[1] = [(-1, 0, 0)]
@@ -564,44 +572,71 @@ def prepocess_with_power(tree): # tree non orienté
         up[i][0] = (tree[i][0][0], tree[i][0][1])
         for j in range(1, int(math.log2(n)) + 1):
             for i in range(1, n+1):
-                if up[i][j-1][0] != -1  and up[ up[i][j-1][0] ][j-1][0] != -1:
+                if up[i][j-1][0] != -1  and up[ up[i][j-1][0] ][j-1][0] != -1: # ces deux conditions permettent de ne pas sortir de l'arbre dans le premier et le deuxième saut
                     up[i][j] = (up[ up[i][j-1][0] ][j-1][0], max(up[i][j-1][1], up[ up[i][j-1][0] ][j-1][1]))
-    return up
+    return up          # une relation de récurrence montre que pour atteindre l'ancêtre 
+                        # à 2^j on prend le 2^j-1 ancêtre du 2^j-1 ème.
 
+"""""   Fonction level
+Description recherche de la profondeur de chaque noeuds en utilisant un BFS.
+input: 
+arbre couvrant minimal donné par kruskal
+output:
+dictionnaire contenant toutes les profondeures
+
+"""
 
 def level(tree): # non orienté
     lv = { k : 0 for k in tree.graph.keys()}
     q = deque([1])
-    visited = [1]
+    visited = {1}
     while q:
         current_node = q.popleft()
         for neighbors in tree.graph[current_node]:
             if neighbors[0] not in visited:
-                visited.append(neighbors[0]) 
-                q.append(neighbors[0])
+                visited.add(neighbors[0]) 
                 lv[neighbors[0]] = lv[current_node] + 1
+                q.append(neighbors[0])
     return lv
 
+"""""   Fonction find_lca
+Description:
+----------
+on cherche l'ancêtre commun minimal de a et b (qui sont des neouds), mais on remonte 
+aux ancêtres avec des puissance de 2 donc plus rapidement.
 
-def find_lca(tree, a, b): # non orienté orienté
-    p = []
-    n = tree.nb_nodes
-    oriented_tree = build_oriented_tree(tree)
-    up = prepocess_with_power(oriented_tree)
-    lv = level(tree)
+input:
+-------
+tree: arbre donné par kruskal
+a: noeud de départ 
+b: noued d'arrivé 
+
+output:
+-------
+puissance minimal pour relier a et b.
+
+"""
+
+def min_power_lca(a, b, up, lv): # tree arbre non orienté 
+    p = [0]
+    n = len(lv)
     if lv[a] < lv[b]:
         a, b = b, a
     c = a
-    for i in range(int(math.log2(n)), -1, -1):
+    for i in range(int(math.log2(n)), -1, -1): # permet de se placer à la même profondeur 
         if lv[c] - 2**i >= lv[b]:
+
             p = p + [up[c][i][1]]
+            
             c = up[c][i][0]
     if c == b:
         return max(p)
     for i in range(int(math.log2(n)), -2, -1):
         if up[b][i][0] != -1 and  up[b][i][0] != up[c][i][0]:
-            p = p + [up[b][i][1]] 
+
+            p = p + [up[b][i][1]] # on stock les puissances 
             p = p + [up[c][i][1]]
+
             b =  up[b][i][0]
             c = up[c][i][0]
     p = p + [up[c][0][1], up[b][0][1]]
@@ -609,8 +644,32 @@ def find_lca(tree, a, b): # non orienté orienté
 
 
 
+#----------------------------------Q17
 
 
+"""""   Fonction time_find_lca()
+même fonction que que pour time_min_power_tree() mais cette fois pour la fonction 
+find_lca()
+
+"""
+
+
+def time_min_power_lca(network, up, lv):
+    x = network.split('.')[1]
+
+    f = open(r"C:\Users\keteb\OneDrive\Bureau\ensae-prog23\input/"+ 'routes.' + str(x) + '.in', 'r')
+    lines = f.readlines()
+
+    nb_trajet = len(lines)
+    t_start  = perf_counter()
+
+    for i in range(1, nb_trajet):
+        src, dest, _ = map(float, lines[i].split())
+        min_power_lca(src, dest, up, lv)
+
+    t_stop = perf_counter()
+    
+    return (t_stop - t_start)
         
 
 
