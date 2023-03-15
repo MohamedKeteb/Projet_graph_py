@@ -1,4 +1,4 @@
-
+#Projet de Prog
 from collections import deque
 from time import perf_counter
 import numpy as np 
@@ -90,7 +90,7 @@ class Graph:
         visited = {node:False for node in self.nodes}
         components = []
         for node in self.nodes:
-            if not visited[node]:
+            if not visited[node]:  #on trouves les composantes de tous les noeuds non visités 
                 component = bfs(node, visited)
                 components.append(component)
         return components
@@ -226,7 +226,7 @@ class Graph:
 # ----------------------------------------------Fin Q5
         
 
-# ----------------------------------------Q6 :
+# ----------------------------------------Question6 
 
     def min_power(self, src, dest):
         if self.get_path_with_power(src, dest, float('inf')) != None: # on vérifie qu'un chemin existe.
@@ -293,7 +293,7 @@ def graph_from_file(filename):
 # ----------------------------------------------FIN q1 et Q4
 
     
-# Question8 ---> Dans le ficier test_s1q8
+# Question8 ---> Dans le ficier test_s1q8 dans tests
 
 
 
@@ -344,11 +344,11 @@ def time_min_power(network):
     t_stop = perf_counter()
     return (t_stop-t_start)*nb_trajet/5
 
-#-------------------------------------------------Fin Q11
+#-------------------------------------------------Fin Q10
 
 
 
-#----------------------------------------------Question 13
+#----------------------------------------------Question 12
 
 """""   Class UnionFind
 Attributs : 
@@ -420,7 +420,7 @@ def kruskal(g):
     else:
         raise ValueError('g non connexe')
 
-#---------------------------------------------Fin Q13
+#---------------------------------------------Fin Q12
 
 
 
