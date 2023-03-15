@@ -1,6 +1,7 @@
 
 from collections import deque
 from time import perf_counter
+import numpy as np 
 import math
 class Graph:
     def __init__(self, nodes=[]):
@@ -541,3 +542,76 @@ def time_min_power_tree(network, tree):
     t_stop = perf_counter()
     
     return (t_stop - t_start)
+
+
+def prepocess(tree): # tree non orienté 
+    n = len(tree.keys())
+    up = {i : [-1 for j in range(int(math.log2(n)) + 1)] for i in range(1, n+1)}
+    tree[1] = [(-1, 0, 0)]
+    for i in range(1, n+1):
+        up[i][0] = tree[i][0][0]
+        for j in range(1, int(math.log2(n)) + 1):
+            for i in range(1, n+1):
+                if up[i][j-1] != -1:
+                    up[i][j] = up[ up[i][j-1] ][j-1]
+    return up
+    
+def prepocess_with_power(tree): # tree non orienté 
+    n = len(tree.keys())
+    up = {i : [(-1, 0) for j in range(int(math.log2(n)) + 1)] for i in range(1, n+1)}
+    tree[1] = [(-1, 0, 0)]
+    for i in range(1, n+1):
+        up[i][0] = (tree[i][0][0], tree[i][0][1])
+        for j in range(1, int(math.log2(n)) + 1):
+            for i in range(1, n+1):
+                if up[i][j-1][0] != -1  and up[ up[i][j-1][0] ][j-1][0] != -1:
+                    up[i][j] = (up[ up[i][j-1][0] ][j-1][0], max(up[i][j-1][1], up[ up[i][j-1][0] ][j-1][1]))
+    return up
+
+
+def level(tree): # non orienté
+    lv = { k : 0 for k in tree.graph.keys()}
+    q = deque([1])
+    visited = [1]
+    while q:
+        current_node = q.popleft()
+        for neighbors in tree.graph[current_node]:
+            if neighbors[0] not in visited:
+                visited.append(neighbors[0]) 
+                q.append(neighbors[0])
+                lv[neighbors[0]] = lv[current_node] + 1
+    return lv
+
+
+def find_lca(tree, a, b): # non orienté orienté
+    p = []
+    n = tree.nb_nodes
+    oriented_tree = build_oriented_tree(tree)
+    up = prepocess_with_power(oriented_tree)
+    lv = level(tree)
+    if lv[a] < lv[b]:
+        a, b = b, a
+    c = a
+    for i in range(int(math.log2(n)), -1, -1):
+        if lv[c] - 2**i >= lv[b]:
+            p = p + [up[c][i][1]]
+            c = up[c][i][0]
+    if c == b:
+        return max(p)
+    for i in range(int(math.log2(n)), -2, -1):
+        if up[b][i][0] != -1 and  up[b][i][0] != up[c][i][0]:
+            p = p + [up[b][i][1]] 
+            p = p + [up[c][i][1]]
+            b =  up[b][i][0]
+            c = up[c][i][0]
+    p = p + [up[c][0][1], up[b][0][1]]
+    return max(p)
+
+
+
+
+
+        
+
+
+
