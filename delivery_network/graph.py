@@ -207,6 +207,8 @@ class Graph:
             return None
         else :     
             return chem(dest), distance[dest]
+        
+#-------------------------------------------------FIN Q5
     
     """"" Méthode : min_power()
     Description:
@@ -223,7 +225,6 @@ class Graph:
     si pas de chemin : soulever une erreur 
     sinon return une couple contenant contant le chemin sous forme de liste et la puissance minimale sous la forme d’un str.
     """
-# ----------------------------------------------Fin Q5
         
 
 # ----------------------------------------Question6 
