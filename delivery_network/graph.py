@@ -212,7 +212,7 @@ class Graph:
     Description:
     ------------
     Renvoie le chemin ainsi que la avec la puissance minimale nécessaire pour aller d’un nœud de départ à un nœud d’arrivée,
-    s’il en existe un, en utilisant une recherche binomiale (i.e un parcours dichotomique. La fonction renvoie une erreur sinonsi c'est possible 
+    s’il en existe un, en utilisant une recherche dichotomique. La fonction renvoie une erreur sinonn si c'est possible 
     La méthode min_power réalise une dichotomie sur la liste des puissances répertoriées entre deux nœuds. 
     input:
     -----
