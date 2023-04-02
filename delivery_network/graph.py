@@ -209,7 +209,11 @@ class Graph:
             return chem(dest), distance[dest]
         
 #-------------------------------------------------FIN Q5
+
+
+
     
+# ----------------------------------------Question6 
     """"" Méthode : min_power()
     Description:
     ------------
@@ -227,7 +231,6 @@ class Graph:
     """
         
 
-# ----------------------------------------Question6 
 
     def min_power(self, src, dest):
         if self.get_path_with_power(src, dest, float('inf')) != None: # on vérifie qu'un chemin existe.
