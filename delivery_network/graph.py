@@ -27,7 +27,7 @@ class Graph:
                 output += f"{source}-->{destination}\n"
         return output
 
-
+#--------------------------------------Question1
     """""
     Description : 
     -----------
@@ -52,6 +52,10 @@ class Graph:
         self.graph[node2].append((node1, power, dist))
         self.nb_edges += 1
 
+#---------------------------------------FIN Q1
+
+
+ # -----------------------------------------------Question 2
          
     """   Méthode connected_components()
     Description:
@@ -71,8 +75,6 @@ class Graph:
     """  
 
 
-
- # -----------------------------------------------Question 2
 
     def connected_components(self):
         def bfs(start_node, visited):
@@ -115,6 +117,12 @@ class Graph:
     def connected_components_set(self):
         return set(map(frozenset, self.connected_components()))
     
+
+
+
+
+    
+# -------------------------------------------------Question 3
     """""   Méthode get_path_with_power()
     Description : 
     -----------
@@ -135,7 +143,6 @@ class Graph:
 
 
 
-# -------------------------------------------------Question 3
     
 
 
@@ -153,6 +160,10 @@ class Graph:
         return None
 
 # -------------------------------------------------Fin question3
+
+
+
+# --------------------------------------Question 5 avec Dijkstra:
 
     """"" Méthode get_path_min_dist()
     Description :
@@ -173,7 +184,6 @@ class Graph:
 
 
 
-# --------------------------------------Question 5 avec Dijkstra:
 
     def get_path_min_dist(self, src, dest, power):
         
@@ -308,6 +318,7 @@ def graph_from_file(filename):
 
 #---------------------------------------------------Séance 2 
 
+#-----------------------------------------------Question 10 
 """""   Fonction : time_min_power
 Description:
 ------------
@@ -326,7 +337,6 @@ un temps
 """
 
 
-#-----------------------------------------------Question 10 
 # Voir le fichier texte temps.min.power
 
 def time_min_power(network):
@@ -462,7 +472,7 @@ def build_oriented_tree(tree, root=1):
         return oriented_tree
 
 
-"""""   Fonction : get_path
+"""""   Fonction : min_power_tree
 Description:
 -----------
 trouve le chemin entre deux noeuds dans un arbre en remontant les ancêtres pour touver 
@@ -511,6 +521,10 @@ def min_power_tree(src, dest, tree):
 
     return max([x[1] for x in path]), [x[0] for x in path]
 
+
+
+
+#-------------------------------------------------QuestionQ15
 """""   Fonction : time_min_power_tree
 Description :
 ------------
@@ -527,7 +541,6 @@ un temps
 
 """
 
-#-------------------------------------------------QuestionQ15
 
 
 
