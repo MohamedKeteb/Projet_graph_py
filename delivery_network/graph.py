@@ -1,8 +1,11 @@
 #Projet de Prog
+
 from collections import deque
 from time import perf_counter
 import numpy as np 
+import dask as da
 import math
+
 class Graph:
     def __init__(self, nodes=[]):
         self.nodes = nodes
@@ -415,7 +418,7 @@ def kruskal(g):
     if len(g.connected_components_set()) == 1:
         ed = UnionFind(g.nb_nodes)
         i = 0
-        edges = g.edges
+        edges = g.edges 
         edges.sort(key = lambda x : x[2])
         g_mst = Graph(g.nodes)
         while g_mst.nb_edges != g.nb_nodes - 1:
@@ -695,3 +698,67 @@ def time_min_power_lca(network, up, lv):
 
 #---------------------------------------------------Question 18-----------------------------------------------------
 
+def preprocessing(filename,trucks_filtre):
+    with open(filename,'r') as file:
+        nb_path=int(file.readline())
+        path=[]
+        for _ in range(nb_path):
+            city1,city2,utility,power=file.readline().split()
+            path.append((int(city1),int(city2),float(utility),int(power)))
+    file.close()
+    path.sort(key=lambda x: (x[3]))
+    knapsack=[]
+    i=0
+    N=len(trucks_filtre)
+    for k in range(N):
+        if trucks_filtre[k][0]>=path[i][3]:
+            while i<len(path) and trucks_filtre[k][0]>=path[i][3] :
+                knapsack.append((trucks_filtre[k][0],trucks_filtre[k][1],path[i][2],path[i][0],path[i][1])) #Puissance, coût, profit, ville1, ville2
+                i+=1
+        if i>=len(path):
+            return knapsack
+
+B=25*10**9
+def greedy(knapsack):
+    knapsack.sort(key=lambda x: x[1]/x[2])
+    trajet=[]
+    k=0
+    S=0
+    P=0
+    N=len(knapsack)
+    while k<N:
+        if S+knapsack[k][1]<=B:
+            trajet.append((knapsack[k][0],knapsack[k][1],knapsack[k][3],knapsack[k][4]))
+            S+=knapsack[k][1]
+            P+=knapsack[k][2]
+            k+=1
+        else:
+            return trajet,S, P
+    return trajet,S, P
+
+
+def dynamique(knapsack):
+    matrice = da.array([[0 for _ in range(B+ 1)] for x in range(len(knapsack) + 1)])
+    for i in range(1, len(knapsack) + 1):
+        print(i)
+        for w in range(1, B+1):
+            print(w)
+            if knapsack[i-1][1] <= w:
+                matrice[i][w] = max(knapsack[i-1][2] + matrice[i-1][w-knapsack[i-1][1]], matrice[i-1][w])
+            else:
+                matrice[i][w] = matrice[i-1][w]
+            
+    # Retrouver les éléments en fonction de la somme
+    w = B
+    n = len(knapsack)
+    elements_selection = []
+
+    while w >= 0 and n >= 0:
+        e = knapsack[n-1]
+        if matrice[n][w] == matrice[n-1][w-e[1]] + e[2]:
+            elements_selection.append(e)
+            w -= e[1]
+
+        n -= 1
+
+    return matrice[-1][-1], elements_selection
