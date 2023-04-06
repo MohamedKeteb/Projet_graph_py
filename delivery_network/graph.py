@@ -697,14 +697,25 @@ def time_min_power_lca(network, up, lv):
 
 
 #---------------------------------------------------Question 18-----------------------------------------------------
+""""" Fonction preprocessing
+input:
+-----
+filename : Chemin des fichiers trucks.in
+trucks_filtre : liste de couple
 
+output:
+-------
+knapsack : est une liste contenant des quintuplet de la forme 
+(Puissance, coût, profit, ville1, ville2)
+
+"""
 def preprocessing(filename,trucks_filtre):
     with open(filename,'r') as file:
         nb_path=int(file.readline())
         path=[]
         for _ in range(nb_path):
-            city1,city2,utility,power=file.readline().split()
-            path.append((int(city1),int(city2),float(utility),int(power)))
+            ville1,ville2,utility,power=file.readline().split()
+            path.append((int(ville1),int(ville2),float(utility),int(power)))
     file.close()
     path.sort(key=lambda x: (x[3]))
     knapsack=[]
@@ -717,6 +728,21 @@ def preprocessing(filename,trucks_filtre):
                 i+=1
         if i>=len(path):
             return knapsack
+        
+
+
+""""" Fonction greedy
+input:
+------
+knapsack : list qui est retournée par la fonction preprocessing
+
+output:
+------
+trajets : list de quadruplet (puissance, coût, ville1, ville2)
+les camions à acheter sont déterminer par la puissance et le coût et les trajets par ville1 et ville2.
+
+
+"""
 
 B=25*10**9
 def greedy(knapsack):
@@ -736,9 +762,18 @@ def greedy(knapsack):
             return trajet,S, P
     return trajet,S, P
 
+""""" Fonction dynamique
+input : 
+------
+knapsack : liste qui est retournée par la fonction preprocessing
+output:
+------
+trajet : couple contenant le coût et une liste contenant des 
 
+
+"""""
 def dynamique(knapsack):
-    matrice = da.array([[0 for _ in range(B+ 1)] for x in range(len(knapsack) + 1)])
+    matrice = np.array([[0 for _ in range(B+ 1)] for x in range(len(knapsack) + 1)])
     for i in range(1, len(knapsack) + 1):
         print(i)
         for w in range(1, B+1):
@@ -748,17 +783,17 @@ def dynamique(knapsack):
             else:
                 matrice[i][w] = matrice[i-1][w]
             
-    # Retrouver les éléments en fonction de la somme
+    # Retrouver les trajets en fonction de la somme
     w = B
     n = len(knapsack)
-    elements_selection = []
+    trajet = []
 
     while w >= 0 and n >= 0:
         e = knapsack[n-1]
         if matrice[n][w] == matrice[n-1][w-e[1]] + e[2]:
-            elements_selection.append(e)
+            trajet.append(e)
             w -= e[1]
 
         n -= 1
 
-    return matrice[-1][-1], elements_selection
+    return matrice[-1][-1], trajet
