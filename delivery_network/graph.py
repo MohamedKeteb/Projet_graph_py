@@ -100,7 +100,6 @@ class Graph:
                 components.append(component)
         return components
    
-# ----------------------------------------------------fin Q2
 
     """"" Méthode connected_components_set()
     Description:
@@ -120,11 +119,9 @@ class Graph:
     def connected_components_set(self):
         return set(map(frozenset, self.connected_components()))
     
+# ----------------------------------------------------FINQ2
 
 
-
-
-    
 # -------------------------------------------------Question 3
     """""   Méthode get_path_with_power()
     Description : 
@@ -162,11 +159,11 @@ class Graph:
                     queue.append((neighbor[0], path + [neighbor[0]]))
         return None
 
-# -------------------------------------------------Fin question3
+# -------------------------------------------------FINQ3
 
 
 
-# --------------------------------------Question 5 avec Dijkstra:
+# --------------------------------------Question 5:
 
     """"" Méthode get_path_min_dist()
     Description :
@@ -307,17 +304,9 @@ def graph_from_file(filename):
 
 
 
-# ----------------------------------------------FIN q1 et Q4
-
-    
+# ----------------------------------------------FIN Q1 et Q4
+ 
 # Question8 ---> Dans le ficier test_s1q8 dans tests
-
-
-
-
-
-
-
 
 #---------------------------------------------------Séance 2 
 
@@ -524,7 +513,7 @@ def min_power_tree(src, dest, tree):
 
     return max([x[1] for x in path]), [x[0] for x in path]
 
-
+#-------------------------------------------------FINQ14
 
 
 #-------------------------------------------------QuestionQ15
@@ -564,8 +553,11 @@ def time_min_power_tree(network, tree):
     
     return (t_stop - t_start)
 
+#-------------------------------------------------FINQ15
 
-#-----------------------------------Q16
+#-------------------------------------------------------Séance 3
+
+#--------------------------------------------------Question16
 
 
 """"" Fonction: process
@@ -694,9 +686,11 @@ def time_min_power_lca(network, up, lv):
     
     return (t_stop - t_start)
         
+#---------------------------------------------------FINQ17
 
+#-----------------------------------------------------Séance 4
 
-#---------------------------------------------------Question 18-----------------------------------------------------
+#---------------------------------------------------Question 18
 """"" Fonction trucks_filter
 
 input:
