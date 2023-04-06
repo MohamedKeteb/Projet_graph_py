@@ -705,7 +705,7 @@ filename_trucks : chemin d'un fichier trucks.in
 
 output:
 -------
-liste de couple de la forme (puissance, coût)
+liste de couples de la forme (puissance, coût)
 
 """
 def trucks_filter(filename_trucks):
