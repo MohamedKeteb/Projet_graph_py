@@ -697,6 +697,34 @@ def time_min_power_lca(network, up, lv):
 
 
 #---------------------------------------------------Question 18-----------------------------------------------------
+""""" Fonction trucks_filter
+
+input:
+------
+filename_trucks : chemin d'un fichier trucks.in
+
+output:
+-------
+liste de couple de la forme (puissance, coût)
+
+"""
+def trucks_filter(filename_trucks):
+    with open (filename_trucks, 'r') as file:
+        nb_trucks = int(file.readline())
+        trucks = []
+        for _ in range(nb_trucks):
+            power, cost = file.readline().split()
+            trucks.append((int(power), int(cost)))
+    file.close()
+
+    trucks.sort(key = lambda x: (x[0], -x[1]))
+    trucks_filter = [trucks[-1]]
+    for elt in trucks[-2::-1]:
+        if elt[1] < trucks_filter[-1][1]:
+            trucks_filter.append(elt)
+    return trucks_filter[::-1]
+
+
 """"" Fonction preprocessing
 input:
 -----
@@ -709,6 +737,7 @@ knapsack : est une liste contenant des quintuplet de la forme
 (Puissance, coût, profit, ville1, ville2)
 
 """
+
 def preprocessing(filename,trucks_filtre):
     with open(filename,'r') as file:
         nb_path=int(file.readline())
@@ -740,7 +769,6 @@ output:
 ------
 trajets : list de quadruplet (puissance, coût, ville1, ville2)
 les camions à acheter sont déterminer par la puissance et le coût et les trajets par ville1 et ville2.
-
 
 """
 
@@ -797,3 +825,4 @@ def dynamique(knapsack):
         n -= 1
 
     return matrice[-1][-1], trajet
+
