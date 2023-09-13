@@ -39,6 +39,8 @@ print(process(ot))
 
 # %%
 
+
+from graph import preprocessing, greddy
 def trucks_filter(filename_trucks):
     with open (filename_trucks, 'r') as file:
         nb_trucks = int(file.readline())
@@ -55,9 +57,12 @@ def trucks_filter(filename_trucks):
             trucks_filter.append(elt)
     return trucks_filter[::-1]
 
-filename_trucks = r'C:\Users\keteb\OneDrive\Bureau\Projet_graph_py\input\trucks.0.in'
+filename_trucks = r'C:\Users\keteb\OneDrive\Bureau\Projet_graph_py\input\trucks.2.in'
 
-print(trucks_filter(filename_trucks))
+t = trucks_filter(filename_trucks)
+
+filename = 'output\routes.1.out'
+print(preprocessing(filename, t))
 
 
 

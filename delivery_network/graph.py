@@ -239,6 +239,8 @@ class Graph:
     si pas de chemin : soulever une erreur 
     sinon return une couple contenant contant le chemin sous forme de liste et la puissance minimale sous la forme d’un str.
     """
+
+    
         
 
 
